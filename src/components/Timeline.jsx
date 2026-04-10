@@ -172,6 +172,18 @@ export default function Timeline() {
         {timelineData.map((item, index) => (
           <TimelineNode key={index} item={item} index={index} />
         ))}
+
+        {/* Closing quote — immediately after last photo */}
+        <div className="text-center pt-8 pb-4">
+          <p
+            className="text-xl md:text-2xl text-stone-300 leading-relaxed"
+            style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic' }}
+          >
+            Four years. Countless memories. One unforgettable journey.
+            <br />
+            This isn't the end, it's just the beginning.
+          </p>
+        </div>
       </div>
     </section>
   )

@@ -1,18 +1,18 @@
 import { useState } from 'react'
 
 const students = [
-  { name: 'Aaliya Khan', major: 'CSE(AIDS)', uid: '0187AS221002', avatar: '/images/students.png' },
-  { name: 'Rohit Sharma', major: 'CSE', uid: '0187CS221015', avatar: '/images/students.png' },
-  { name: 'Priya Patel', major: 'CSE(CYBER)', uid: '0187CY221008', avatar: '/images/students.png' },
-  { name: 'Arjun Verma', major: 'MECH', uid: '0187ME221023', avatar: '/images/students.png' },
-  { name: 'Sneha Gupta', major: 'CSE', uid: '0187CS221042', avatar: '/images/students.png' },
-  { name: 'Vikash Singh', major: 'EC', uid: '0187EC221005', avatar: '/images/students.png' },
-  { name: 'Neha Tiwari', major: 'CSE(AIDS)', uid: '0187AS221019', avatar: '/images/students.png' },
-  { name: 'Aditya Joshi', major: 'EX', uid: '0187EX221011', avatar: '/images/students.png' },
-  { name: 'Kavya Mishra', major: 'CIVIL', uid: '0187CE221007', avatar: '/images/students.png' },
-  { name: 'Rajat Kumar', major: 'CSE', uid: '0187CS221033', avatar: '/images/students.png' },
-  { name: 'Divya Saxena', major: 'CSE(CYBER)', uid: '0187CY221014', avatar: '/images/students.png' },
-  { name: 'Mohit Yadav', major: 'MECH', uid: '0187ME221009', avatar: '/images/students.png' },
+  { name: 'Aaliya Khan', uid: '0187CS221002', avatar: '/images/students.png' },
+  { name: 'Rohit Sharma', uid: '0187CS221015', avatar: '/images/students.png' },
+  { name: 'Priya Patel', uid: '0187CS221008', avatar: '/images/students.png' },
+  { name: 'Arjun Verma', uid: '0187CS221023', avatar: '/images/students.png' },
+  { name: 'Sneha Gupta', uid: '0187CS221042', avatar: '/images/students.png' },
+  { name: 'Vikash Singh', uid: '0187CS221005', avatar: '/images/students.png' },
+  { name: 'Neha Tiwari', uid: '0187CS221019', avatar: '/images/students.png' },
+  { name: 'Aditya Joshi', uid: '0187CS221011', avatar: '/images/students.png' },
+  { name: 'Kavya Mishra', uid: '0187CS221007', avatar: '/images/students.png' },
+  { name: 'Rajat Kumar', uid: '0187CS221033', avatar: '/images/students.png' },
+  { name: 'Divya Saxena', uid: '0187CS221014', avatar: '/images/students.png' },
+  { name: 'Mohit Yadav', uid: '0187CS221009', avatar: '/images/students.png' },
 ]
 
 const majors = ['All Majors', 'CSE', 'CSE(AIDS)', 'CSE(CYBER)', 'MECH', 'CIVIL', 'EC', 'EX']
@@ -22,102 +22,122 @@ export default function Yearbook() {
   const [filter, setFilter] = useState('All Majors')
   const [selectedStudent, setSelectedStudent] = useState(null)
   const [message, setMessage] = useState('')
+  const [visibleCount, setVisibleCount] = useState(8)
 
   const filtered = students.filter((s) => {
     const matchesSearch =
       s.name.toLowerCase().includes(search.toLowerCase()) ||
       s.uid.toLowerCase().includes(search.toLowerCase())
-    const matchesMajor = filter === 'All Majors' || s.major === filter
+    const matchesMajor = filter === 'All Majors' || filter === 'CSE'
     return matchesSearch && matchesMajor
   })
 
   return (
-    <section className="py-16 md:py-24">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <span className="inline-block px-4 py-1.5 border border-gold-500 text-gold-500 text-xs tracking-widest uppercase font-medium rounded-full mb-6">
-            Yearbook
-          </span>
+    <section className="min-h-screen">
+      {/* Header area — slightly lighter to separate from navbar */}
+      <div className="bg-stone-950 pt-10 pb-14">
+        <div className="max-w-6xl mx-auto px-6 text-center">
           <h2
-            className="text-4xl md:text-5xl font-bold text-stone-100 mb-4"
-            style={{ fontFamily: 'var(--font-serif)' }}
+            className="text-6xl md:text-7xl lg:text-8xl text-stone-100 mb-5"
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontStyle: 'italic',
+              fontWeight: 400,
+            }}
           >
             The Class of '26
           </h2>
-          <p className="text-stone-400 text-lg">
-            Click on a card to sign their yearbook ✍️
+          <p className="text-stone-400 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+            Faces that defined our journey. Moments that became memories.
+            Click a card to sign their yearbook.
           </p>
         </div>
+      </div>
 
-        {/* Search & Filter */}
-        <div className="flex flex-col md:flex-row gap-4 mb-10">
-          <div className="flex-1 relative">
-            <svg
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-500"
-              fill="none" viewBox="0 0 24 24" stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input
-              type="text"
-              placeholder="Find a classmate..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-stone-800 border border-stone-700 rounded-lg text-stone-100 placeholder-stone-500 focus:outline-none focus:border-gold-500 transition-colors"
-            />
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {majors.map((m) => (
-              <button
-                key={m}
-                onClick={() => setFilter(m)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
-                  filter === m
-                    ? 'bg-gold-500 text-stone-900'
-                    : 'bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-stone-200'
-                }`}
+      {/* Content area — distinct darker background */}
+      <div className="bg-stone-950 py-10">
+        <div className="max-w-6xl mx-auto px-6">
+          {/* Search & Filter */}
+          <div className="flex flex-col md:flex-row gap-4 mb-10">
+            <div className="flex-1 relative">
+              <svg
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-500"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor"
               >
-                {m}
-              </button>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Find a classmate..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-stone-900 border border-stone-700 rounded-lg text-stone-100 placeholder-stone-500 focus:outline-none focus:border-gold-500 transition-colors"
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {majors.map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setFilter(m)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
+                    filter === m
+                      ? 'bg-gold-500 text-stone-900'
+                      : 'bg-stone-900 border border-stone-700 text-stone-400 hover:border-stone-400 hover:text-stone-200'
+                  }`}
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Student Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filtered.slice(0, visibleCount).map((student, i) => (
+              <div
+                key={i}
+                onClick={() => setSelectedStudent(student)}
+                className="student-card group bg-stone-900 border border-stone-800 rounded-lg overflow-hidden cursor-pointer hover:border-gold-500/30 hover:bg-stone-850 transition-all duration-300 hover:shadow-lg hover:shadow-gold-500/5"
+              >
+                <div className="aspect-square overflow-hidden bg-stone-800">
+                  <img
+                    src={student.avatar}
+                    alt={student.name}
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div className="p-4">
+                  <h3
+                    className="text-stone-100 font-semibold text-sm mb-1 group-hover:text-gold-500 transition-colors"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    {student.name}
+                  </h3>
+                  <p className="text-stone-500 text-xs">CSE</p>
+                  <p className="text-stone-600 text-xs mt-1 font-mono">{student.uid}</p>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
 
-        {/* Student Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filtered.map((student, i) => (
-            <div
-              key={i}
-              onClick={() => setSelectedStudent(student)}
-              className="student-card group bg-stone-800/50 border border-stone-700/50 rounded-lg overflow-hidden cursor-pointer hover:border-gold-500/30 hover:bg-stone-800 transition-all duration-300 hover:shadow-lg hover:shadow-gold-500/5"
-            >
-              <div className="aspect-square overflow-hidden bg-stone-700">
-                <img
-                  src={student.avatar}
-                  alt={student.name}
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-4">
-                <h3
-                  className="text-stone-100 font-semibold text-sm mb-1 group-hover:text-gold-500 transition-colors"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                >
-                  {student.name}
-                </h3>
-                <p className="text-stone-500 text-xs">{student.major}</p>
-                <p className="text-stone-600 text-xs mt-1 font-mono">{student.uid}</p>
-              </div>
+          {/* Load More */}
+          {visibleCount < filtered.length && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setVisibleCount((prev) => prev + 8)}
+                className="px-8 py-3 border border-stone-600 text-stone-400 text-sm tracking-[0.2em] uppercase font-medium rounded-sm hover:border-gold-500 hover:text-gold-500 transition-all duration-300 cursor-pointer"
+              >
+                Load More Classmates
+              </button>
             </div>
-          ))}
-        </div>
+          )}
 
-        {filtered.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-stone-500 text-lg">No classmates found matching your search.</p>
-          </div>
-        )}
+          {filtered.length === 0 && (
+            <div className="text-center py-16">
+              <p className="text-stone-500 text-lg">No classmates found matching your search.</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Student Detail Modal */}
@@ -147,7 +167,7 @@ export default function Yearbook() {
                 <h3 className="text-xl font-bold text-stone-100" style={{ fontFamily: 'var(--font-serif)' }}>
                   {selectedStudent.name}
                 </h3>
-                <p className="text-stone-400 text-sm">{selectedStudent.major} • {selectedStudent.uid}</p>
+                <p className="text-stone-400 text-sm">CSE • {selectedStudent.uid}</p>
               </div>
             </div>
 
