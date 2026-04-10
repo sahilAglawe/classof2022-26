@@ -1,0 +1,254 @@
+@import "tailwindcss";
+
+/* ===== Custom Theme ===== */
+@theme {
+  --color-stone-50: #fafaf9;
+  --color-stone-100: #f5f5f4;
+  --color-stone-200: #e7e5e4;
+  --color-stone-300: #d6d3d1;
+  --color-stone-400: #a8a29e;
+  --color-stone-500: #78716c;
+  --color-stone-600: #57534e;
+  --color-stone-700: #44403c;
+  --color-stone-800: #292524;
+  --color-stone-850: #1c1917;
+  --color-stone-900: #1c1917;
+  --color-stone-950: #0c0a09;
+
+  --color-gold-400: #f5c842;
+  --color-gold-500: #eca413;
+  --color-gold-600: #d4920e;
+  --color-gold-700: #a3700b;
+
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Work Sans', system-ui, sans-serif;
+  --font-handwriting: 'Caveat', cursive;
+}
+
+/* ===== Base Styles ===== */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-stone-900);
+  color: var(--color-stone-100);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: var(--color-gold-500);
+  color: white;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f0c08;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-500);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ===== Film Grain Overlay ===== */
+.bg-grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+}
+
+/* ===== Polaroid Frame ===== */
+.polaroid {
+  background: #f5f5f0;
+  padding: 12px 12px 48px 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 0, 0, 0.2);
+  transform: rotate(-2deg);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.polaroid:hover {
+  transform: rotate(0deg) scale(1.02);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+.polaroid-right {
+  transform: rotate(2deg);
+}
+.polaroid-right:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+.polaroid-center {
+  transform: rotate(0deg);
+}
+.polaroid-center:hover {
+  transform: rotate(-1deg) scale(1.02);
+}
+
+.polaroid-caption {
+  font-family: var(--font-handwriting);
+  font-size: 1.15rem;
+  color: #444;
+  text-align: center;
+  padding-top: 10px;
+}
+
+/* ===== Timeline Line ===== */
+.timeline-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--color-stone-600) 10%,
+    var(--color-stone-600) 90%,
+    transparent
+  );
+}
+
+/* ===== Year Badge ===== */
+.year-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--color-gold-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--color-gold-500);
+  background-color: rgba(28, 25, 23, 0.9);
+  z-index: 10;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.8s ease forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.8s ease forwards;
+}
+
+/* ===== Masonry Grid ===== */
+.masonry-grid {
+  column-count: 3;
+  column-gap: 1rem;
+}
+.masonry-grid > * {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .masonry-grid {
+    column-count: 2;
+  }
+}
+@media (max-width: 640px) {
+  .masonry-grid {
+    column-count: 1;
+  }
+}
+
+/* ===== Sticky Note ===== */
+.sticky-note {
+  padding: 1.5rem;
+  border-radius: 2px;
+  box-shadow: 2px 3px 12px rgba(0,0,0,0.3);
+  transform: rotate(-1deg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-family: var(--font-handwriting);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  min-height: 120px;
+}
+.sticky-note:nth-child(even) {
+  transform: rotate(1.5deg);
+}
+.sticky-note:nth-child(3n) {
+  transform: rotate(-0.5deg);
+}
+.sticky-note:hover {
+  transform: rotate(0deg) scale(1.04);
+  box-shadow: 4px 6px 18px rgba(0,0,0,0.4);
+  z-index: 10;
+}
+
+/* ===== Student Card ===== */
+.student-card img {
+  filter: grayscale(100%);
+  transition: filter 0.4s ease;
+}
+.student-card:hover img {
+  filter: grayscale(0%);
+}
