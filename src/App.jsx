@@ -26,14 +26,17 @@ function App() {
 
   return (
     <div className="min-h-screen bg-stone-900 text-stone-100">
-      <Navbar
-        currentPage={currentPage}
-        onNavClick={handleNavClick}
-        onSignIn={() => setShowSignIn(true)}
-      />
+      {/* Hide navbar on hero landing page */}
+      {!(showHero && currentPage === 'journey') && (
+        <Navbar
+          currentPage={currentPage}
+          onNavClick={handleNavClick}
+          onSignIn={() => setShowSignIn(true)}
+        />
+      )}
 
       {showHero && currentPage === 'journey' ? (
-        <HeroSection onStart={handleStartJourney} />
+        <HeroSection onStart={handleStartJourney} onSignIn={() => setShowSignIn(true)} />
       ) : (
         <main className="pt-20">
           {currentPage === 'journey' && <Timeline />}
