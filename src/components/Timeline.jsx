@@ -76,9 +76,8 @@ function TimelineNode({ item, index }) {
         <div className="year-badge mb-8">{item.year}</div>
 
         <div
-          className={`max-w-2xl transition-all duration-700 ${
-            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}
+          className={`max-w-2xl transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
           style={{ transitionDelay: '0.2s' }}
         >
           {/* Polaroid */}
@@ -103,19 +102,17 @@ function TimelineNode({ item, index }) {
       </div>
 
       <div
-        className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center ${
-          isRight ? 'lg:direction-rtl' : ''
-        }`}
+        className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center ${isRight ? 'lg:direction-rtl' : ''
+          }`}
       >
         {/* Image side */}
         <div
-          className={`${isRight ? 'lg:order-2' : 'lg:order-1'} transition-all duration-700 ${
-            visible
+          className={`${isRight ? 'lg:order-2' : 'lg:order-1'} transition-all duration-700 ${visible
               ? 'opacity-100 translate-x-0'
               : isRight
-              ? 'opacity-0 translate-x-16'
-              : 'opacity-0 -translate-x-16'
-          }`}
+                ? 'opacity-0 translate-x-16'
+                : 'opacity-0 -translate-x-16'
+            }`}
           style={{ transitionDelay: '0.2s' }}
         >
           <div className={`polaroid ${isRight ? 'polaroid-right' : ''}`} style={{ maxWidth: '500px', margin: isRight ? '0 0 0 auto' : undefined }}>
@@ -130,13 +127,12 @@ function TimelineNode({ item, index }) {
 
         {/* Text side */}
         <div
-          className={`${isRight ? 'lg:order-1' : 'lg:order-2'} transition-all duration-700 ${
-            visible
+          className={`${isRight ? 'lg:order-1' : 'lg:order-2'} transition-all duration-700 ${visible
               ? 'opacity-100 translate-x-0'
               : isRight
-              ? 'opacity-0 -translate-x-16'
-              : 'opacity-0 translate-x-16'
-          }`}
+                ? 'opacity-0 -translate-x-16'
+                : 'opacity-0 translate-x-16'
+            }`}
           style={{ transitionDelay: '0.4s' }}
         >
           <h3

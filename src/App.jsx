@@ -46,7 +46,10 @@ function App() {
         </main>
       )}
 
-      <Footer onNavClick={handleNavClick} />
+      {/* Hide footer on hero landing page */}
+      {!(showHero && currentPage === 'journey') && (
+        <Footer onNavClick={handleNavClick} />
+      )}
 
       {showSignIn && <SignInModal onClose={() => setShowSignIn(false)} />}
 
