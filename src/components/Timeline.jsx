@@ -17,7 +17,7 @@ const timelineData = [
       'The library became our second home. We stressed over midterms, but the coffee breaks in between made it all bearable.',
     image: '/images/library-study.png',
     caption: 'Library all-nighter... again 📚',
-    side: 'left',
+    side: 'right',
   },
   {
     year: '2023',
@@ -26,7 +26,7 @@ const timelineData = [
       "It was our turn to roll out the welcome mat. We planned, rehearsed, and stayed up way too late — all so our juniors could have a night to remember. Turns out, hosting is harder than attending.",
     image: '/images/freshers-night.png',
     caption: "Freshers' night — their first, our finest 🎊",
-    side: 'right',
+    side: 'left',
   },
   {
     year: '2025',
@@ -35,7 +35,7 @@ const timelineData = [
       'We weren\'t just saying goodbye to our seniors — we were saying goodbye to a version of ourselves. The farewell wasn\'t just theirs. It was ours too.',
     image: '/images/farewell.png',
     caption: 'The farewell that hit different 💐',
-    side: 'left',
+    side: 'right',
   },
   {
     year: '2026',
@@ -81,11 +81,11 @@ function TimelineNode({ item, index }) {
           style={{ transitionDelay: '0.2s' }}
         >
           {/* Polaroid */}
-          <div className="polaroid polaroid-center mx-auto" style={{ maxWidth: '550px' }}>
+          <div className="polaroid polaroid-center mx-auto group/img" style={{ maxWidth: '550px' }}>
             <img
               src={item.image}
               alt={item.title}
-              className="w-full aspect-[4/3] object-cover"
+              className="w-full aspect-[4/3] object-cover grayscale transition-[filter] duration-500 group-hover/img:grayscale-0"
             />
             <p className="polaroid-caption">{item.caption}</p>
           </div>
@@ -115,11 +115,11 @@ function TimelineNode({ item, index }) {
             }`}
           style={{ transitionDelay: '0.2s' }}
         >
-          <div className={`polaroid ${isRight ? 'polaroid-right' : ''}`} style={{ maxWidth: '500px', margin: isRight ? '0 0 0 auto' : undefined }}>
+          <div className={`polaroid ${isRight ? 'polaroid-right' : ''} group/img`} style={{ maxWidth: '500px', margin: isRight ? '0 0 0 auto' : undefined }}>
             <img
               src={item.image}
               alt={item.title}
-              className="w-full aspect-[4/3] object-cover"
+              className="w-full aspect-[4/3] object-cover grayscale transition-[filter] duration-500 group-hover/img:grayscale-0"
             />
             <p className="polaroid-caption">{item.caption}</p>
           </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-export default function Navbar({ currentPage, onNavClick, onSignIn }) {
+export default function Navbar({ currentPage, onNavClick, onSignIn, onLogoClick }) {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -27,10 +27,12 @@ export default function Navbar({ currentPage, onNavClick, onSignIn }) {
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <button
-          onClick={() => onNavClick('journey')}
+          onClick={onLogoClick}
           className="flex items-center gap-2 group cursor-pointer"
         >
-          <span className="text-gold-500 text-2xl">🎓</span>
+          <span className="w-9 h-9 flex items-center justify-center rounded-full border-2 border-transparent group-hover:border-gold-500 group-hover:bg-gold-500/10 transition-all duration-300 text-lg">
+            🎓
+          </span>
           <span
             className="text-xl font-bold tracking-wide text-stone-100 group-hover:text-gold-500 transition-colors"
             style={{ fontFamily: 'var(--font-serif)' }}

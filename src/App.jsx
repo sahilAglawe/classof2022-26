@@ -24,6 +24,12 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  const handleLogoClick = () => {
+    setShowHero(true)
+    setCurrentPage('journey')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <div className="min-h-screen bg-stone-900 text-stone-100">
       {/* Hide navbar on hero landing page */}
@@ -32,6 +38,7 @@ function App() {
           currentPage={currentPage}
           onNavClick={handleNavClick}
           onSignIn={() => setShowSignIn(true)}
+          onLogoClick={handleLogoClick}
         />
       )}
 
