@@ -79,6 +79,7 @@ export default function TheWall() {
   const [showForm, setShowForm] = useState(false)
   const [newMsg, setNewMsg] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
+  const [anonymous, setAnonymous] = useState(false)
   const [visibleCount, setVisibleCount] = useState(8)
 
   const handleSubmit = (e) => {
@@ -87,32 +88,34 @@ export default function TheWall() {
     setMessages([
       {
         text: newMsg,
-        author: newAuthor.trim() || 'Anonymous',
+        author: anonymous ? 'Anonymous' : (newAuthor.trim() || 'Anonymous'),
         color: Math.floor(Math.random() * noteColors.length),
       },
       ...messages,
     ])
     setNewMsg('')
     setNewAuthor('')
+    setAnonymous(false)
     setShowForm(false)
   }
 
   return (
-    <section className="py-16 md:py-24 relative">
+    <section className="py-16 md:py-24 relative" style={{ background: 'linear-gradient(180deg, #0c1220 0%, #111827 40%, #0f172a 100%)' }}>
       <div className="px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <span className="inline-block px-4 py-1.5 border border-gold-500 text-gold-500 text-xs tracking-widest uppercase font-medium rounded-full mb-6">
-            Final Goodbyes
+          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gold-500/10 border border-gold-500/40 text-gold-500 text-xs tracking-widest uppercase font-medium rounded-full mb-6">
+            🧡 Final Goodbyes
           </span>
           <h2
-            className="text-4xl md:text-5xl font-bold text-stone-100 mb-4"
+            className="text-5xl md:text-6xl lg:text-7xl font-bold text-stone-100 mb-5"
             style={{ fontFamily: 'var(--font-serif)' }}
           >
             Message Wall of Reflection
           </h2>
-          <p className="text-stone-400 text-lg max-w-xl mx-auto">
-            Leave your final words, wishes, and memories for the batch.
+          <p className="text-stone-400 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+            A space to leave your final words, memories, and wishes. These notes
+            will remain here as a testament to our journey.
           </p>
         </div>
 
@@ -146,10 +149,9 @@ export default function TheWall() {
       {/* Floating Write Button */}
       <button
         onClick={() => setShowForm(true)}
-        className="fixed bottom-8 right-8 z-30 w-14 h-14 bg-gold-500 hover:bg-gold-600 text-stone-900 rounded-full shadow-lg shadow-gold-500/20 flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110 cursor-pointer"
-        title="Write a Message"
+        className="fixed bottom-8 right-8 z-30 px-6 py-3 bg-gold-500 hover:bg-gold-600 text-stone-900 rounded-full shadow-lg shadow-gold-500/20 flex items-center gap-2 text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-105 cursor-pointer"
       >
-        ✍️
+        ✉️ Write a Message
       </button>
 
       {/* Write Message Modal */}
@@ -159,57 +161,91 @@ export default function TheWall() {
           onClick={() => setShowForm(false)}
         >
           <div
-            className="bg-stone-900 border border-stone-700 rounded-lg p-8 w-full max-w-md mx-4 shadow-2xl"
+            className="rounded-2xl p-8 w-full max-w-lg mx-4 shadow-2xl relative"
+            style={{ background: '#faf8f5' }}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Close button */}
             <button
               onClick={() => setShowForm(false)}
-              className="float-right text-stone-500 hover:text-stone-200 transition-colors cursor-pointer"
+              className="absolute top-6 right-6 text-stone-400 hover:text-stone-600 transition-colors cursor-pointer"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
             </button>
 
+            {/* Title */}
             <h3
-              className="text-2xl font-bold text-stone-100 mb-6"
-              style={{ fontFamily: 'var(--font-serif)' }}
+              className="text-3xl mb-8"
+              style={{ fontFamily: 'var(--font-handwriting)', color: '#2d2a26' }}
             >
-              Write a Message ✉️
+              Leave a Note...
             </h3>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-stone-300 mb-1.5">
-                  Your Name (optional)
-                </label>
+            <form onSubmit={handleSubmit}>
+              {/* Message textarea */}
+              <textarea
+                value={newMsg}
+                onChange={(e) => setNewMsg(e.target.value)}
+                placeholder="I'll never forget..."
+                rows={6}
+                className="w-full bg-transparent border-none outline-none resize-none text-lg mb-4"
+                style={{
+                  fontFamily: 'var(--font-handwriting)',
+                  fontSize: '1.1rem',
+                  color: '#2d2a26',
+                  borderBottom: '1px solid #d4d0ca',
+                  paddingBottom: '1rem',
+                }}
+              />
+
+              {/* Name input */}
+              <input
+                type="text"
+                value={newAuthor}
+                onChange={(e) => setNewAuthor(e.target.value)}
+                placeholder="Your Name (Optional)"
+                disabled={anonymous}
+                className="w-full bg-transparent border-none outline-none py-3 text-lg"
+                style={{
+                  fontFamily: 'var(--font-handwriting)',
+                  color: anonymous ? '#b5b0a8' : '#2d2a26',
+                  borderBottom: '1px solid #d4d0ca',
+                  opacity: anonymous ? 0.5 : 1,
+                }}
+              />
+
+              {/* Anonymous checkbox */}
+              <label className="flex items-center gap-3 mt-5 cursor-pointer select-none">
                 <input
-                  type="text"
-                  value={newAuthor}
-                  onChange={(e) => setNewAuthor(e.target.value)}
-                  placeholder="Anonymous"
-                  className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-md text-stone-100 placeholder-stone-500 focus:outline-none focus:border-gold-500 transition-colors"
+                  type="checkbox"
+                  checked={anonymous}
+                  onChange={(e) => {
+                    setAnonymous(e.target.checked)
+                    if (e.target.checked) setNewAuthor('')
+                  }}
+                  className="w-5 h-5 rounded border-2 accent-stone-800 cursor-pointer"
+                  style={{ borderColor: '#c4c0b8' }}
                 />
+                <span
+                  className="text-base"
+                  style={{ color: '#5a564e', fontFamily: 'var(--font-handwriting)' }}
+                >
+                  Keep it mysterious (Post Anonymously)
+                </span>
+              </label>
+
+              {/* Submit button */}
+              <div className="flex justify-end mt-8">
+                <button
+                  type="submit"
+                  className="px-8 py-3 rounded-full text-white font-semibold text-sm tracking-wide transition-all duration-300 hover:scale-105 cursor-pointer"
+                  style={{ background: '#1a1a1a' }}
+                >
+                  Pin to Wall
+                </button>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-stone-300 mb-1.5">
-                  Your Message
-                </label>
-                <textarea
-                  value={newMsg}
-                  onChange={(e) => setNewMsg(e.target.value)}
-                  placeholder="Share your memories, wishes, or final words..."
-                  rows={4}
-                  className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-md text-stone-100 placeholder-stone-500 focus:outline-none focus:border-gold-500 transition-colors resize-none"
-                  style={{ fontFamily: 'var(--font-handwriting)', fontSize: '1.05rem' }}
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full py-3 bg-gold-500 hover:bg-gold-600 text-stone-900 font-semibold rounded-md transition-colors cursor-pointer"
-              >
-                Post to the Wall
-              </button>
             </form>
           </div>
         </div>
