@@ -59,7 +59,7 @@ export default function Yearbook() {
     <section className="min-h-screen">
       {/* Header area — slightly lighter to separate from navbar */}
       <div className="bg-stone-950 pt-10 pb-14">
-        <div className="max-w-6xl mx-auto px-6 text-center">
+        <div className="px-8 text-center">
           <h2
             className="text-6xl md:text-7xl lg:text-8xl text-stone-100 mb-5"
             style={{
@@ -79,7 +79,7 @@ export default function Yearbook() {
 
       {/* Content area — distinct darker background */}
       <div className="bg-stone-950 py-10">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="px-8">
           {/* Search & Filter */}
           <div className="flex flex-col md:flex-row gap-4 mb-10">
             <div className="flex-1 relative">
@@ -113,6 +113,9 @@ export default function Yearbook() {
               ))}
             </div>
           </div>
+
+          {/* Divider */}
+          <div className="border-t border-stone-700 mb-10"></div>
 
           {/* Student Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

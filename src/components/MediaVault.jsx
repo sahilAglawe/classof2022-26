@@ -7,21 +7,24 @@ const photos = [
   { src: '/images/freshers-night.png', caption: "Freshers' night magic", tag: '3rd yr', aspect: 'wide' },
   { src: '/images/hackathon.png', caption: 'SAMADHAN 1.0 — Code warriors', tag: '3rd yr', aspect: 'tall' },
   { src: '/images/farewell.png', caption: 'The farewell we\'ll never forget', tag: '4th yr', aspect: 'square' },
-  { src: '/images/college-fest.png', caption: "Fiesta'25 — Our finest hour", tag: "Fiesta'25", aspect: 'wide' },
+  { src: '/images/college-fest.png', caption: "Aura'24 — Our finest hour", tag: "Aura'24", aspect: 'wide' },
   { src: '/images/graduation.png', caption: 'To new beginnings', tag: '4th yr', aspect: 'tall' },
 ]
 
-const filters = ['All Memories', '1st yr', '2nd yr', '3rd yr', '4th yr', "Fiesta'26", "Fiesta'25"]
+const filters = ['All Memories', '1st yr', '2nd yr', '3rd yr', '4th yr', "Aura'25", "Aura'24", 'Festivals']
 
 export default function MediaVault() {
   const [activeFilter, setActiveFilter] = useState('All Memories')
   const [lightbox, setLightbox] = useState(null)
   const [newestFirst, setNewestFirst] = useState(true)
+  const [visibleCount, setVisibleCount] = useState(6)
 
   const filtered =
     activeFilter === 'All Memories'
       ? photos
-      : photos.filter((p) => p.tag === activeFilter)
+      : activeFilter === 'Festivals'
+        ? photos.filter((p) => p.tag.startsWith('Aura'))
+        : photos.filter((p) => p.tag === activeFilter)
 
   const sortedPhotos = newestFirst ? [...filtered].reverse() : filtered
 
@@ -29,7 +32,7 @@ export default function MediaVault() {
     <section className="min-h-screen">
       {/* Header area — visually distinct from content, sits below navbar */}
       <div className="bg-stone-950 pt-10 pb-14">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="px-8">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div className="text-center md:text-left">
               <h2
@@ -75,7 +78,10 @@ export default function MediaVault() {
 
       {/* Content area — darker background to separate from header/navbar */}
       <div className="bg-stone-950 py-10">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="px-8">
+          {/* Divider */}
+          <div className="border-t border-stone-700 mb-10"></div>
+
           {/* Filter pills */}
           <div className="flex flex-wrap gap-3 mb-12">
             {filters.map((f) => (
@@ -95,7 +101,7 @@ export default function MediaVault() {
 
           {/* Photo Grid — 3 columns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sortedPhotos.map((photo, i) => (
+            {sortedPhotos.slice(0, visibleCount).map((photo, i) => (
               <div
                 key={i}
                 onClick={() => setLightbox(photo)}
@@ -123,6 +129,21 @@ export default function MediaVault() {
               </div>
             ))}
           </div>
+
+          {/* Unlock More */}
+          {visibleCount < sortedPhotos.length && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setVisibleCount((prev) => prev + 6)}
+                className="inline-flex items-center gap-2 px-8 py-3 border border-stone-600 text-stone-400 text-sm tracking-[0.2em] uppercase font-medium rounded-sm hover:border-gold-500 hover:text-gold-500 transition-all duration-300 cursor-pointer"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                </svg>
+                Unlock More Vault Items
+              </button>
+            </div>
+          )}
 
           {filtered.length === 0 && (
             <div className="text-center py-16">

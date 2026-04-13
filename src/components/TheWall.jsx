@@ -99,7 +99,7 @@ export default function TheWall() {
 
   return (
     <section className="py-16 md:py-24 relative">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="px-8">
         {/* Header */}
         <div className="text-center mb-12">
           <span className="inline-block px-4 py-1.5 border border-gold-500 text-gold-500 text-xs tracking-widest uppercase font-medium rounded-full mb-6">
