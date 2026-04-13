@@ -23,6 +23,8 @@ export default function Yearbook() {
   const [selectedStudent, setSelectedStudent] = useState(null)
   const [message, setMessage] = useState('')
   const [visibleCount, setVisibleCount] = useState(8)
+  // Store messages per student UID: { [uid]: [{ text, author, date }] }
+  const [studentMessages, setStudentMessages] = useState({})
 
   const filtered = students.filter((s) => {
     const matchesSearch =
@@ -31,6 +33,27 @@ export default function Yearbook() {
     const matchesMajor = filter === 'All Majors' || filter === 'CSE'
     return matchesSearch && matchesMajor
   })
+
+  const handleSendMessage = () => {
+    if (!message.trim() || !selectedStudent) return
+    const newMsg = {
+      text: message.trim(),
+      author: 'Anonymous',
+      date: new Date().toLocaleDateString(),
+    }
+    setStudentMessages((prev) => ({
+      ...prev,
+      [selectedStudent.uid]: [...(prev[selectedStudent.uid] || []), newMsg],
+    }))
+    setMessage('')
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSendMessage()
+    }
+  }
 
   return (
     <section className="min-h-screen">
@@ -151,6 +174,7 @@ export default function Yearbook() {
         const currentIndex = filtered.indexOf(selectedStudent)
         const prevStudent = currentIndex > 0 ? filtered[currentIndex - 1] : null
         const nextStudent = currentIndex < filtered.length - 1 ? filtered[currentIndex + 1] : null
+        const messages = studentMessages[selectedStudent.uid] || []
 
         return (
           <div
@@ -220,12 +244,9 @@ export default function Yearbook() {
                     </h4>
                   </div>
                   <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setShowReply(prev => !prev)}
-                      className="px-3 py-1 border border-stone-600 text-stone-400 text-xs tracking-wider uppercase rounded-sm hover:border-gold-500 hover:text-gold-500 transition-all cursor-pointer"
-                    >
-                      + Reply
-                    </button>
+                    <span className="px-3 py-1 border border-stone-700 text-stone-500 text-xs tracking-wider uppercase rounded-sm">
+                      {messages.length} {messages.length === 1 ? 'Reply' : 'Replies'}
+                    </span>
                     <button
                       onClick={() => setSelectedStudent(null)}
                       className="text-stone-500 hover:text-stone-200 transition-colors cursor-pointer"
@@ -239,19 +260,39 @@ export default function Yearbook() {
 
                 {/* Messages list */}
                 <div className="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar">
-                  {/* Sample message */}
-                  <div className="bg-stone-900/80 border border-stone-800 rounded-lg p-4">
-                    <p
-                      className="text-stone-200 mb-2 leading-relaxed"
-                      style={{ fontFamily: 'var(--font-handwriting)', fontSize: '1.1rem' }}
-                    >
-                      Stay blessed, Be happy
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-stone-500 text-xs">— Dev Shrivastava</span>
-                      <span className="text-stone-600 text-xs">3/24/2026</span>
+                  {messages.length === 0 ? (
+                    /* Empty state — shown when no messages exist */
+                    <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                      <p
+                        className="text-stone-500 italic text-lg leading-relaxed"
+                        style={{ fontFamily: 'var(--font-handwriting)' }}
+                      >
+                        No signatures yet.
+                      </p>
+                      <p
+                        className="text-stone-600 italic text-base mt-1"
+                        style={{ fontFamily: 'var(--font-handwriting)' }}
+                      >
+                        Be the first to leave a memory.
+                      </p>
                     </div>
-                  </div>
+                  ) : (
+                    /* Render actual messages */
+                    messages.map((msg, idx) => (
+                      <div key={idx} className="bg-stone-900/80 border border-stone-800 rounded-lg p-4">
+                        <p
+                          className="text-stone-200 mb-2 leading-relaxed"
+                          style={{ fontFamily: 'var(--font-handwriting)', fontSize: '1.1rem' }}
+                        >
+                          {msg.text}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-stone-500 text-xs">— {msg.author}</span>
+                          <span className="text-stone-600 text-xs">{msg.date}</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
 
                 {/* Message input */}
@@ -260,13 +301,14 @@ export default function Yearbook() {
                     <textarea
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
+                      onKeyDown={handleKeyDown}
                       placeholder="Write a farewell message..."
                       className="w-full px-4 py-3 pr-12 bg-stone-900 border border-stone-800 rounded-lg text-stone-100 placeholder-stone-600 focus:outline-none focus:border-gold-500 transition-colors resize-none"
                       rows={2}
                       style={{ fontFamily: 'var(--font-handwriting)', fontSize: '1.05rem' }}
                     />
                     <button
-                      onClick={() => setMessage('')}
+                      onClick={handleSendMessage}
                       className="absolute bottom-3 right-3 w-8 h-8 flex items-center justify-center text-gold-500 hover:text-gold-400 transition-colors cursor-pointer"
                     >
                       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
