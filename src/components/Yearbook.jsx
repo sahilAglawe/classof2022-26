@@ -99,12 +99,18 @@ export default function Yearbook() {
                 onClick={() => setSelectedStudent(student)}
                 className="student-card group bg-stone-900 border border-stone-800 rounded-lg overflow-hidden cursor-pointer hover:border-gold-500/30 hover:bg-stone-850 transition-all duration-300 hover:shadow-lg hover:shadow-gold-500/5"
               >
-                <div className="aspect-square overflow-hidden bg-stone-800">
+              <div className="relative aspect-square overflow-hidden bg-stone-800">
                   <img
                     src={student.avatar}
                     alt={student.name}
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
+                  {/* Hover overlay with button */}
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="px-4 py-2 bg-gold-500 text-stone-900 text-xs font-semibold tracking-[0.15em] uppercase rounded-sm">
+                      Open Yearbook
+                    </span>
+                  </div>
                 </div>
                 <div className="p-4">
                   <h3
@@ -141,62 +147,139 @@ export default function Yearbook() {
       </div>
 
       {/* Student Detail Modal */}
-      {selectedStudent && (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in"
-          onClick={() => setSelectedStudent(null)}
-        >
+      {selectedStudent && (() => {
+        const currentIndex = filtered.indexOf(selectedStudent)
+        const prevStudent = currentIndex > 0 ? filtered[currentIndex - 1] : null
+        const nextStudent = currentIndex < filtered.length - 1 ? filtered[currentIndex + 1] : null
+
+        return (
           <div
-            className="bg-stone-900 border border-stone-700 rounded-lg p-8 w-full max-w-lg mx-4 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 backdrop-blur-md animate-fade-in"
+            onClick={() => setSelectedStudent(null)}
           >
-            <button
-              onClick={() => setSelectedStudent(null)}
-              className="float-right text-stone-500 hover:text-stone-200 transition-colors cursor-pointer"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
+            {/* Prev arrow */}
+            {prevStudent && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setSelectedStudent(prevStudent) }}
+                className="absolute left-4 md:left-8 z-10 w-12 h-12 flex items-center justify-center text-stone-400 hover:text-gold-500 transition-colors cursor-pointer"
+              >
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
 
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 rounded-full overflow-hidden bg-stone-700 flex-shrink-0">
-                <img src={selectedStudent.avatar} alt={selectedStudent.name} className="w-full h-full object-cover" />
+            {/* Next arrow */}
+            {nextStudent && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setSelectedStudent(nextStudent) }}
+                className="absolute right-4 md:right-8 z-10 w-12 h-12 flex items-center justify-center text-stone-400 hover:text-gold-500 transition-colors cursor-pointer"
+              >
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+
+            {/* Modal content */}
+            <div
+              className="flex flex-col md:flex-row w-full max-w-4xl max-h-[85vh] mx-4 rounded-xl overflow-hidden shadow-2xl border border-stone-800"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Left — Photo */}
+              <div className="relative w-full md:w-1/2 bg-stone-900 flex-shrink-0">
+                <img
+                  src={selectedStudent.avatar}
+                  alt={selectedStudent.name}
+                  className="w-full h-64 md:h-full object-cover grayscale"
+                />
+                {/* Name overlay at bottom */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                  <h3
+                    className="text-2xl md:text-3xl font-bold text-stone-100 mb-1"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    {selectedStudent.name}
+                  </h3>
+                  <p className="text-sm">
+                    <span className="text-gold-500 font-semibold tracking-wide">CSE</span>
+                    <span className="text-stone-400 mx-2">|</span>
+                    <span className="text-stone-400 font-mono text-xs">{selectedStudent.uid}</span>
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-stone-100" style={{ fontFamily: 'var(--font-serif)' }}>
-                  {selectedStudent.name}
-                </h3>
-                <p className="text-stone-400 text-sm">CSE • {selectedStudent.uid}</p>
+
+              {/* Right — Messages panel */}
+              <div className="w-full md:w-1/2 bg-stone-950 flex flex-col max-h-[85vh]">
+                {/* Header */}
+                <div className="flex items-center justify-between p-5 border-b border-stone-800">
+                  <div>
+                    <p className="text-stone-500 text-xs mb-1" style={{ fontFamily: 'var(--font-handwriting)' }}>///</p>
+                    <h4 className="text-stone-200 text-sm font-semibold tracking-wide">
+                      Messages from the Batch
+                    </h4>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setShowReply(prev => !prev)}
+                      className="px-3 py-1 border border-stone-600 text-stone-400 text-xs tracking-wider uppercase rounded-sm hover:border-gold-500 hover:text-gold-500 transition-all cursor-pointer"
+                    >
+                      + Reply
+                    </button>
+                    <button
+                      onClick={() => setSelectedStudent(null)}
+                      className="text-stone-500 hover:text-stone-200 transition-colors cursor-pointer"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Messages list */}
+                <div className="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar">
+                  {/* Sample message */}
+                  <div className="bg-stone-900/80 border border-stone-800 rounded-lg p-4">
+                    <p
+                      className="text-stone-200 mb-2 leading-relaxed"
+                      style={{ fontFamily: 'var(--font-handwriting)', fontSize: '1.1rem' }}
+                    >
+                      Stay blessed, Be happy
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-stone-500 text-xs">— Dev Shrivastava</span>
+                      <span className="text-stone-600 text-xs">3/24/2026</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Message input */}
+                <div className="p-5 border-t border-stone-800">
+                  <div className="relative">
+                    <textarea
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Write a farewell message..."
+                      className="w-full px-4 py-3 pr-12 bg-stone-900 border border-stone-800 rounded-lg text-stone-100 placeholder-stone-600 focus:outline-none focus:border-gold-500 transition-colors resize-none"
+                      rows={2}
+                      style={{ fontFamily: 'var(--font-handwriting)', fontSize: '1.05rem' }}
+                    />
+                    <button
+                      onClick={() => setMessage('')}
+                      className="absolute bottom-3 right-3 w-8 h-8 flex items-center justify-center text-gold-500 hover:text-gold-400 transition-colors cursor-pointer"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-
-            <div className="mb-4">
-              <h4 className="text-stone-300 text-sm font-semibold mb-3 tracking-wide uppercase">
-                Messages from the Batch
-              </h4>
-              <div className="bg-stone-800/50 rounded-lg p-4 mb-4 min-h-[80px]">
-                <p className="text-stone-500 text-sm italic">No messages yet. Be the first to write!</p>
-              </div>
-            </div>
-
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Write a farewell message..."
-              className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-lg text-stone-100 placeholder-stone-500 focus:outline-none focus:border-gold-500 transition-colors resize-none"
-              rows={3}
-              style={{ fontFamily: 'var(--font-handwriting)', fontSize: '1.05rem' }}
-            />
-            <button
-              onClick={() => setMessage('')}
-              className="mt-3 w-full py-2.5 bg-gold-500 hover:bg-gold-600 text-stone-900 font-semibold rounded-md transition-colors cursor-pointer"
-            >
-              Send Message ✉️
-            </button>
           </div>
-        </div>
-      )}
+        )
+      })()}
     </section>
   )
 }
