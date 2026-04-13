@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { registerUser, signInUser } from '../firebase/auth'
 
-export default function SignInModal({ onClose }) {
+export default function SignInModal({ onClose, onLoginSuccess }) {
   const [mode, setMode] = useState('signin') // 'signin' or 'register'
+  const [loading, setLoading] = useState(false)
 
   // Sign In state
   const [email, setEmail] = useState('')
@@ -14,21 +16,32 @@ export default function SignInModal({ onClose }) {
   const [regPassword, setRegPassword] = useState('')
   const [regError, setRegError] = useState('')
   const [signInError, setSignInError] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault()
     setSignInError('')
     if (!email.trim() || !password.trim()) {
       setSignInError('Please fill in all fields.')
       return
     }
-    // TODO: Connect to Firebase auth
-    console.log('Sign In:', { email, password })
+
+    setLoading(true)
+    try {
+      const userProfile = await signInUser(email, password)
+      onLoginSuccess(userProfile)
+      onClose()
+    } catch (err) {
+      setSignInError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault()
     setRegError('')
+    setSuccessMsg('')
 
     if (!regName.trim() || !regEmail.trim() || !regPassword.trim()) {
       setRegError('Name, Email, and Password are mandatory.')
@@ -48,14 +61,26 @@ export default function SignInModal({ onClose }) {
       }
     }
 
-    // TODO: Connect to Firebase auth + Firestore
-    console.log('Register:', {
-      name: regName,
-      email: regEmail,
-      branch: 'CSE',
-      rollNo: regRoll,
-      password: regPassword,
-    })
+    setLoading(true)
+    try {
+      const result = await registerUser({
+        name: regName,
+        email: regEmail,
+        branch: 'CSE',
+        rollNo: regRoll,
+        password: regPassword,
+      })
+      setSuccessMsg(result.message)
+      // Clear form
+      setRegName('')
+      setRegEmail('')
+      setRegRoll('')
+      setRegPassword('')
+    } catch (err) {
+      setRegError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const switchMode = () => {
@@ -148,13 +173,14 @@ export default function SignInModal({ onClose }) {
 
               <button
                 type="submit"
-                className="w-full py-4 rounded-lg font-semibold text-base tracking-wide transition-all duration-300 cursor-pointer hover:brightness-110"
+                disabled={loading}
+                className="w-full py-4 rounded-lg font-semibold text-base tracking-wide transition-all duration-300 cursor-pointer hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   background: 'var(--color-gold-500)',
                   color: '#1a1814',
                 }}
               >
-                Sign In
+                {loading ? 'Signing in...' : 'Sign In'}
               </button>
             </form>
 
@@ -286,15 +312,22 @@ export default function SignInModal({ onClose }) {
                 <p className="text-red-400 text-sm text-center">{regError}</p>
               )}
 
+              {successMsg && (
+                <div className="text-center py-3 px-4 rounded-lg" style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)' }}>
+                  <p className="text-green-400 text-sm">✅ {successMsg}</p>
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full py-4 rounded-lg font-semibold text-base tracking-wide transition-all duration-300 cursor-pointer hover:brightness-110"
+                disabled={loading}
+                className="w-full py-4 rounded-lg font-semibold text-base tracking-wide transition-all duration-300 cursor-pointer hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   background: 'var(--color-gold-500)',
                   color: '#1a1814',
                 }}
               >
-                Request Access
+                {loading ? 'Submitting...' : 'Request Access'}
               </button>
             </form>
 

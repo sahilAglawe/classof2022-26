@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function HeroSection({ onStart, onSignIn }) {
+export default function HeroSection({ onStart, onSignIn, user }) {
   const [hovered, setHovered] = useState(false)
 
   return (
@@ -14,13 +14,20 @@ export default function HeroSection({ onStart, onSignIn }) {
         }}
       />
 
-      {/* Student Login — top right */}
-      <button
-        onClick={onSignIn}
-        className="absolute top-6 right-8 z-20 px-5 py-2 border border-stone-500 text-stone-200 text-xs font-semibold tracking-[0.2em] uppercase rounded-sm hover:border-gold-500 hover:text-gold-500 transition-all duration-300 cursor-pointer"
-      >
-        Student Login
-      </button>
+      {/* Top right — Student Login or Welcome */}
+      {user ? (
+        <div className="absolute top-6 right-8 z-20 flex items-center gap-3">
+          <span className="text-stone-400 text-xs tracking-wide">Welcome,</span>
+          <span className="text-gold-500 text-sm font-semibold">{user.name.split(' ')[0]}</span>
+        </div>
+      ) : (
+        <button
+          onClick={onSignIn}
+          className="absolute top-6 right-8 z-20 px-5 py-2 border border-stone-500 text-stone-200 text-xs font-semibold tracking-[0.2em] uppercase rounded-sm hover:border-gold-500 hover:text-gold-500 transition-all duration-300 cursor-pointer"
+        >
+          Student Login
+        </button>
+      )}
 
       {/* All hero content — shifts up on CTA hover */}
       <div
