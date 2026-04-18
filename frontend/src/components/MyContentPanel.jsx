@@ -25,6 +25,10 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
   // Lightbox for media
   const [lightbox, setLightbox] = useState(null)
 
+  // Custom confirmation dialog state
+  const [confirmDialog, setConfirmDialog] = useState(null)
+  // confirmDialog = { title, message, icon, onConfirm, confirmLabel, confirmColor }
+
   // Fetch user's media
   useEffect(() => {
     if (!user) return
@@ -71,16 +75,33 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
     return s ? s.name : 'Unknown'
   }
 
+  // =====================
+  // Custom confirm helper
+  // =====================
+  const showConfirm = ({ title, message, icon, confirmLabel, onConfirm }) => {
+    setConfirmDialog({ title, message, icon, confirmLabel, onConfirm })
+  }
+
+  const closeConfirm = () => setConfirmDialog(null)
+
   // Media handlers
-  const handleDeleteMedia = async (item) => {
-    if (!window.confirm('Delete this photo permanently?')) return
-    try {
-      await deleteMediaItem(item.id)
-      setMyMedia((prev) => prev.filter((m) => m.id !== item.id))
-      if (lightbox?.id === item.id) setLightbox(null)
-    } catch (err) {
-      alert('Error deleting: ' + err.message)
-    }
+  const handleDeleteMedia = (item) => {
+    showConfirm({
+      title: 'Delete Photo',
+      message: 'This photo will be permanently removed from the vault. This action cannot be undone.',
+      icon: 'photo',
+      confirmLabel: 'Delete Photo',
+      onConfirm: async () => {
+        closeConfirm()
+        try {
+          await deleteMediaItem(item.id)
+          setMyMedia((prev) => prev.filter((m) => m.id !== item.id))
+          if (lightbox?.id === item.id) setLightbox(null)
+        } catch (err) {
+          alert('Error deleting: ' + err.message)
+        }
+      },
+    })
   }
 
   const handleStartEdit = (item) => {
@@ -103,14 +124,22 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
   }
 
   // Yearbook message handlers
-  const handleDeleteMessage = async (msg) => {
-    if (!window.confirm('Delete this yearbook message?')) return
-    try {
-      await deleteYearbookMessage(msg.id)
-      setMyMessages((prev) => prev.filter((m) => m.id !== msg.id))
-    } catch (err) {
-      alert('Error deleting: ' + err.message)
-    }
+  const handleDeleteMessage = (msg) => {
+    showConfirm({
+      title: 'Delete Message',
+      message: `Your message to ${getStudentName(msg.toUid)} will be permanently deleted.`,
+      icon: 'message',
+      confirmLabel: 'Delete Message',
+      onConfirm: async () => {
+        closeConfirm()
+        try {
+          await deleteYearbookMessage(msg.id)
+          setMyMessages((prev) => prev.filter((m) => m.id !== msg.id))
+        } catch (err) {
+          alert('Error deleting: ' + err.message)
+        }
+      },
+    })
   }
 
   const formatDate = (timestamp) => {
@@ -454,6 +483,85 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
               >
                 Save Changes
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =============================== */}
+      {/* Custom Confirmation Dialog */}
+      {/* =============================== */}
+      {confirmDialog && (
+        <div
+          className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in"
+          onClick={closeConfirm}
+        >
+          <div
+            className="w-full max-w-sm mx-4 rounded-2xl overflow-hidden"
+            style={{
+              background: 'linear-gradient(160deg, #1e1c18, #151310)',
+              border: '1px solid rgba(239, 68, 68, 0.15)',
+              boxShadow: '0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(239,68,68,0.04)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top red accent */}
+            <div
+              className="h-[2px] w-full"
+              style={{ background: 'linear-gradient(90deg, transparent, #ef4444, transparent)' }}
+            />
+
+            <div className="p-6 sm:p-7">
+              {/* Icon */}
+              <div className="flex justify-center mb-5">
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                  style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.15)' }}
+                >
+                  {confirmDialog.icon === 'photo' ? (
+                    <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  )}
+                </div>
+              </div>
+
+              {/* Title */}
+              <h4
+                className="text-center text-lg font-semibold mb-2 text-stone-100"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                {confirmDialog.title}
+              </h4>
+
+              {/* Message */}
+              <p className="text-center text-stone-400 text-sm leading-relaxed mb-6">
+                {confirmDialog.message}
+              </p>
+
+              {/* Buttons */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={closeConfirm}
+                  className="flex-1 py-3 rounded-xl text-sm font-medium text-stone-400 bg-stone-800/60 border border-stone-700/50 hover:bg-stone-700/60 hover:text-stone-200 transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDialog.onConfirm}
+                  className="flex-1 py-3 rounded-xl text-sm font-semibold text-white transition-all cursor-pointer hover:brightness-110"
+                  style={{
+                    background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+                    boxShadow: '0 4px 14px rgba(239,68,68,0.25)',
+                  }}
+                >
+                  {confirmDialog.confirmLabel}
+                </button>
+              </div>
             </div>
           </div>
         </div>
