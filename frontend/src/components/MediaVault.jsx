@@ -30,6 +30,8 @@ export default function MediaVault({ user }) {
   const [uploadCaption, setUploadCaption] = useState('')
   const [uploadTag, setUploadTag] = useState('1st Year')
   const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadStatus, setUploadStatus] = useState('') // 'compressing' | 'uploading'
   const fileRef = useRef(null)
 
   // Fetch media from Firestore
@@ -59,8 +61,16 @@ export default function MediaVault({ user }) {
   const handleUpload = async () => {
     if (!uploadFile || !uploadCaption.trim() || !user) return
     setUploading(true)
+    setUploadProgress(0)
+    setUploadStatus('compressing')
     try {
-      const imageUrl = await uploadMediaImage(user.uid, uploadFile)
+      const imageUrl = await uploadMediaImage(
+        user.uid,
+        uploadFile,
+        (progress) => setUploadProgress(progress),
+        (status) => setUploadStatus(status)
+      )
+      setUploadStatus('saving')
       await addMediaItem({
         imageUrl,
         caption: uploadCaption.trim(),
@@ -68,18 +78,19 @@ export default function MediaVault({ user }) {
         uploadedBy: user.name,
         uploadedByUid: user.uid,
       })
-      // Refresh
       await fetchPhotos()
-      // Reset
       setShowUpload(false)
       setUploadFile(null)
       setUploadPreview(null)
       setUploadCaption('')
       setUploadTag('1st Year')
+      setUploadProgress(0)
+      setUploadStatus('')
     } catch (err) {
       alert('Error uploading: ' + err.message)
     } finally {
       setUploading(false)
+      setUploadStatus('')
     }
   }
 
@@ -113,29 +124,28 @@ export default function MediaVault({ user }) {
     <section className="min-h-screen">
       {/* Header */}
       <div className="bg-stone-950 pt-10 pb-6">
-        <div className="px-8 text-center">
-          <span className="inline-block px-4 py-1.5 border border-gold-500 text-gold-500 text-xs tracking-widest uppercase font-medium rounded-full mb-6">
-            📸 Photo Archive
-          </span>
+        <div className="px-8">
           <h2
-            className="text-5xl md:text-6xl lg:text-7xl text-stone-100 mb-4"
+            className="text-6xl md:text-7xl lg:text-8xl text-stone-100 mb-5"
             style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400 }}
           >
-            Media Vault
+            The Archive
           </h2>
-          <p className="text-stone-400 text-lg max-w-xl mx-auto mb-6">
-            A visual journey through our years together, curated by the batch.
-          </p>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <p className="text-stone-400 text-base md:text-lg max-w-md leading-relaxed">
+              A cinematic collection of fleeting moments, frozen in time. From the first lecture to the final goodbye.
+            </p>
 
-          {/* Add Photo — visible only to logged-in users */}
-          {user && (
-            <button
-              onClick={() => setShowUpload(true)}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-gold-500 text-stone-900 text-sm font-semibold tracking-wide rounded-lg hover:brightness-110 transition-all cursor-pointer"
-            >
-              ＋ Add Photos
-            </button>
-          )}
+            {/* Add Photo — visible only to logged-in users */}
+            {user && (
+              <button
+                onClick={() => setShowUpload(true)}
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-gold-500 text-stone-900 text-sm font-semibold tracking-wide rounded-lg hover:brightness-110 transition-all cursor-pointer self-start md:self-auto"
+              >
+                ＋ Add Photos
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -367,6 +377,32 @@ export default function MediaVault({ user }) {
               </div>
             </div>
 
+            {/* Progress bar */}
+            {uploading && (
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-stone-400 text-xs">
+                    {uploadStatus === 'compressing' && '🔄 Compressing image...'}
+                    {uploadStatus === 'uploading' && '📤 Uploading to vault...'}
+                    {uploadStatus === 'saving' && '💾 Saving...'}
+                  </span>
+                  {uploadStatus === 'uploading' && (
+                    <span className="text-gold-500 text-xs font-bold">{uploadProgress}%</span>
+                  )}
+                </div>
+                <div className="w-full h-2 bg-stone-800 rounded-full overflow-hidden">
+                  {uploadStatus === 'compressing' ? (
+                    <div className="h-full rounded-full animate-pulse" style={{ width: '100%', background: '#555' }} />
+                  ) : (
+                    <div
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{ width: `${uploadProgress}%`, background: 'var(--color-gold-500)' }}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Submit */}
             <button
               onClick={handleUpload}
@@ -374,7 +410,13 @@ export default function MediaVault({ user }) {
               className="w-full py-4 rounded-lg font-semibold text-base tracking-wide transition-all duration-300 cursor-pointer hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed"
               style={{ background: 'var(--color-gold-500)', color: '#1a1814' }}
             >
-              {uploading ? 'Uploading to Vault...' : '📸 Upload to Vault'}
+              {uploading
+                ? uploadStatus === 'compressing'
+                  ? '🔄 Compressing...'
+                  : uploadStatus === 'saving'
+                  ? '💾 Saving...'
+                  : `📤 Uploading... ${uploadProgress}%`
+                : '📸 Upload to Vault'}
             </button>
           </div>
         </div>
