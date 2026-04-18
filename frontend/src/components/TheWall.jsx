@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { getWallMessages, addWallMessage } from '../firebase/firestore'
 
 const noteColors = [
   'bg-amber-100 text-amber-900',
@@ -11,92 +12,57 @@ const noteColors = [
   'bg-pink-100 text-pink-900',
 ]
 
-const initialMessages = [
-  {
-    text: 'Miss you guyss 😭❤️',
-    author: 'Sneha G.',
-    color: 0,
-  },
-  {
-    text: "Never forget this good old daysss. From first bench to last bench partners, we've come a long way.",
-    author: 'Rohit S.',
-    color: 1,
-  },
-  {
-    text: "Four years went by like four months. I'm not crying, you're crying. 🥹",
-    author: 'Anonymous',
-    color: 2,
-  },
-  {
-    text: 'To everyone who shared their notes before exams — you are the real MVPs. 📝',
-    author: 'Aditya J.',
-    color: 3,
-  },
-  {
-    text: "The canteen chai hits different when you know it's the last one. See you on the other side, batch!",
-    author: 'Kavya M.',
-    color: 4,
-  },
-  {
-    text: "Thank you for making college feel like home. I wouldn't trade these memories for anything in the world.",
-    author: 'Priya P.',
-    color: 5,
-  },
-  {
-    text: 'Hall B will always be our Hall B. 😤💪',
-    author: 'Arjun V.',
-    color: 6,
-  },
-  {
-    text: "From strangers to family, this batch gave me memories I'll carry everywhere. Goodbye isn't forever. 💛",
-    author: 'Neha T.',
-    color: 7,
-  },
-  {
-    text: 'Remember the viva where nobody knew the answer and we all just vibed? Good times. 😂',
-    author: 'Vikash S.',
-    color: 0,
-  },
-  {
-    text: "Bittersweet doesn't even begin to describe this. We made it, fam! 🎓",
-    author: 'Divya S.',
-    color: 1,
-  },
-  {
-    text: 'The hostel late night conversations > everything else. Miss those 3 AM chai runs.',
-    author: 'Mohit Y.',
-    color: 2,
-  },
-  {
-    text: "Can't believe it's over. These were the best years of my life and I didn't even realize it while living them.",
-    author: 'Rajat K.',
-    color: 3,
-  },
-]
-
-export default function TheWall() {
-  const [messages, setMessages] = useState(initialMessages)
+export default function TheWall({ user }) {
+  const [messages, setMessages] = useState([])
+  const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [newMsg, setNewMsg] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [anonymous, setAnonymous] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [visibleCount, setVisibleCount] = useState(8)
 
-  const handleSubmit = (e) => {
+  // Fetch messages from Firestore on mount
+  useEffect(() => {
+    fetchMessages()
+  }, [])
+
+  const fetchMessages = async () => {
+    setLoading(true)
+    try {
+      const msgs = await getWallMessages()
+      setMessages(msgs)
+    } catch (err) {
+      console.error('Error fetching wall messages:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!newMsg.trim()) return
-    setMessages([
-      {
-        text: newMsg,
-        author: anonymous ? 'Anonymous' : (newAuthor.trim() || 'Anonymous'),
-        color: Math.floor(Math.random() * noteColors.length),
-      },
-      ...messages,
-    ])
-    setNewMsg('')
-    setNewAuthor('')
-    setAnonymous(false)
-    setShowForm(false)
+    setSubmitting(true)
+    try {
+      const author = anonymous ? 'Anonymous' : (newAuthor.trim() || (user ? user.name : 'Anonymous'))
+      const color = Math.floor(Math.random() * noteColors.length)
+      await addWallMessage({
+        text: newMsg.trim(),
+        author,
+        color,
+      })
+      // Refresh messages from Firestore
+      await fetchMessages()
+      setNewMsg('')
+      setNewAuthor('')
+      setAnonymous(false)
+      setShowForm(false)
+      setVisibleCount((prev) => Math.max(prev, 8))
+    } catch (err) {
+      alert('Error posting message: ' + err.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -119,22 +85,38 @@ export default function TheWall() {
           </p>
         </div>
 
+        {/* Loading */}
+        {loading && (
+          <div className="text-center py-16">
+            <p className="text-stone-500 text-lg">Loading messages...</p>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!loading && messages.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-stone-500 text-lg">No messages yet. Be the first to leave a note!</p>
+          </div>
+        )}
+
         {/* Sticky Notes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {messages.slice(0, visibleCount).map((msg, i) => (
-            <div
-              key={i}
-              className={`sticky-note ${noteColors[msg.color]}`}
-              style={{ animationDelay: `${i * 0.05}s` }}
-            >
-              <p className="mb-3 leading-relaxed">{msg.text}</p>
-              <p className="text-sm opacity-70 font-sans font-medium">— {msg.author}</p>
-            </div>
-          ))}
-        </div>
+        {!loading && messages.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {messages.slice(0, visibleCount).map((msg, i) => (
+              <div
+                key={msg.id || i}
+                className={`sticky-note ${noteColors[msg.color || 0]}`}
+                style={{ animationDelay: `${i * 0.05}s` }}
+              >
+                <p className="mb-3 leading-relaxed">{msg.text}</p>
+                <p className="text-sm opacity-70 font-sans font-medium">— {msg.author}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Load More */}
-        {visibleCount < messages.length && (
+        {!loading && visibleCount < messages.length && (
           <div className="text-center mt-10">
             <button
               onClick={() => setVisibleCount((prev) => prev + 4)}
@@ -203,9 +185,9 @@ export default function TheWall() {
               {/* Name input */}
               <input
                 type="text"
-                value={newAuthor}
+                value={anonymous ? '' : newAuthor}
                 onChange={(e) => setNewAuthor(e.target.value)}
-                placeholder="Your Name (Optional)"
+                placeholder={user ? `Your Name (default: ${user.name})` : 'Your Name (Optional)'}
                 disabled={anonymous}
                 className="w-full bg-transparent border-none outline-none py-3 text-lg"
                 style={{
@@ -240,10 +222,11 @@ export default function TheWall() {
               <div className="flex justify-end mt-8">
                 <button
                   type="submit"
-                  className="px-8 py-3 rounded-full text-white font-semibold text-sm tracking-wide transition-all duration-300 hover:scale-105 cursor-pointer"
+                  disabled={submitting || !newMsg.trim()}
+                  className="px-8 py-3 rounded-full text-white font-semibold text-sm tracking-wide transition-all duration-300 hover:scale-105 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   style={{ background: '#1a1a1a' }}
                 >
-                  Pin to Wall
+                  {submitting ? 'Posting...' : 'Pin to Wall'}
                 </button>
               </div>
             </form>
