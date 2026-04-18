@@ -8,6 +8,7 @@ import TheWall from './components/TheWall'
 import Footer from './components/Footer'
 import SignInModal from './components/SignInModal'
 import AdminDashboard from './components/AdminDashboard'
+import MyContentPanel from './components/MyContentPanel'
 import { onAuthChange, signOutUser } from './firebase/auth'
 
 function App() {
@@ -16,6 +17,8 @@ function App() {
   const [showHero, setShowHero] = useState(true)
   const [user, setUser] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
+  const [showMyContent, setShowMyContent] = useState(false)
+  const [myContentTab, setMyContentTab] = useState('media')
 
   useEffect(() => {
     const unsubscribe = onAuthChange((profile) => {
@@ -56,6 +59,11 @@ function App() {
     setCurrentPage('journey')
   }
 
+  const handleMyContent = (tab) => {
+    setMyContentTab(tab)
+    setShowMyContent(true)
+  }
+
   const isAdmin = user?.role === 'admin'
 
   return (
@@ -70,6 +78,7 @@ function App() {
           user={user}
           onLogout={handleLogout}
           isAdmin={isAdmin}
+          onMyContent={handleMyContent}
         />
       )}
 
@@ -101,6 +110,15 @@ function App() {
         <SignInModal
           onClose={() => setShowSignIn(false)}
           onLoginSuccess={handleLoginSuccess}
+        />
+      )}
+
+      {/* My Content Panel (My Photos / My Messages) */}
+      {showMyContent && user && (
+        <MyContentPanel
+          user={user}
+          defaultTab={myContentTab}
+          onClose={() => setShowMyContent(false)}
         />
       )}
 

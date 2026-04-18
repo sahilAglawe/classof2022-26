@@ -116,11 +116,12 @@ export async function getMediaItems() {
 }
 
 // Add a media item
-export async function addMediaItem({ imageUrl, caption, tag, uploadedBy, uploadedByUid }) {
+export async function addMediaItem({ imageUrl, caption, tag, monthYear, uploadedBy, uploadedByUid }) {
   return await addDoc(collection(db, 'mediaVault'), {
     imageUrl,
     caption,
     tag,
+    monthYear: monthYear || '',
     uploadedBy,
     uploadedByUid,
     createdAt: serverTimestamp(),
@@ -135,4 +136,45 @@ export async function deleteMediaItem(mediaId) {
 // Update a media item
 export async function updateMediaItem(mediaId, data) {
   await updateDoc(doc(db, 'mediaVault', mediaId), data)
+}
+
+// ==========================================
+// USER-SPECIFIC QUERIES (for My Content panel)
+// ==========================================
+
+// Get media uploaded by a specific user
+export async function getMyMediaItems(uid) {
+  const q = query(
+    collection(db, 'mediaVault'),
+    where('uploadedByUid', '==', uid)
+  )
+  const snapshot = await getDocs(q)
+  const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  // Sort client-side (newest first) to avoid needing a Firestore composite index
+  return items.sort((a, b) => {
+    const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0)
+    const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0)
+    return dateB - dateA
+  })
+}
+
+// Get yearbook messages sent by a specific user
+export async function getMyYearbookMessages(uid) {
+  const q = query(
+    collection(db, 'yearbookMessages'),
+    where('authorUid', '==', uid)
+  )
+  const snapshot = await getDocs(q)
+  const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  // Sort client-side (newest first)
+  return items.sort((a, b) => {
+    const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0)
+    const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0)
+    return dateB - dateA
+  })
+}
+
+// Delete a yearbook message
+export async function deleteYearbookMessage(messageId) {
+  await deleteDoc(doc(db, 'yearbookMessages', messageId))
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-export default function Navbar({ currentPage, onNavClick, onSignIn, onLogoClick, user, onLogout, isAdmin }) {
+export default function Navbar({ currentPage, onNavClick, onSignIn, onLogoClick, user, onLogout, isAdmin, onMyContent }) {
   const [scrolled, setScrolled] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
 
@@ -154,7 +154,7 @@ export default function Navbar({ currentPage, onNavClick, onSignIn, onLogoClick,
                     <button
                       onClick={() => {
                         setShowUserMenu(false)
-                        onNavClick('yearbook')
+                        if (onMyContent) onMyContent('yearbook')
                       }}
                       className="w-full text-left px-4 py-2.5 text-sm text-stone-300 hover:bg-stone-800 hover:text-gold-500 transition-colors cursor-pointer"
                     >
@@ -163,7 +163,7 @@ export default function Navbar({ currentPage, onNavClick, onSignIn, onLogoClick,
                     <button
                       onClick={() => {
                         setShowUserMenu(false)
-                        onNavClick('media')
+                        if (onMyContent) onMyContent('media')
                       }}
                       className="w-full text-left px-4 py-2.5 text-sm text-stone-300 hover:bg-stone-800 hover:text-gold-500 transition-colors cursor-pointer"
                     >
