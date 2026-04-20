@@ -52,6 +52,7 @@ function getDefaultMonthYear() {
 export default function MediaVault({ user }) {
   const [activeFilter, setActiveFilter] = useState('All Memories')
   const [lightbox, setLightbox] = useState(null)
+  const [lightboxIndex, setLightboxIndex] = useState(-1)
   const [newestFirst, setNewestFirst] = useState(true)
   const [visibleCount, setVisibleCount] = useState(6)
   const [photos, setPhotos] = useState([])
@@ -174,6 +175,42 @@ export default function MediaVault({ user }) {
   // Step indicator for the upload flow
   const uploadStep = !uploadFile ? 1 : 2
 
+  // Lightbox navigation helpers
+  const openLightbox = (photo) => {
+    const idx = sortedPhotos.findIndex((p) => p.id === photo.id)
+    setLightbox(photo)
+    setLightboxIndex(idx)
+  }
+
+  const goToPrev = () => {
+    if (lightboxIndex <= 0) return
+    const newIdx = lightboxIndex - 1
+    setLightboxIndex(newIdx)
+    setLightbox(sortedPhotos[newIdx])
+  }
+
+  const goToNext = () => {
+    if (lightboxIndex >= sortedPhotos.length - 1) return
+    const newIdx = lightboxIndex + 1
+    setLightboxIndex(newIdx)
+    setLightbox(sortedPhotos[newIdx])
+  }
+
+  const closeLightbox = () => {
+    setLightbox(null)
+    setLightboxIndex(-1)
+  }
+
+  // Format monthYear into short badge format (e.g. "November 2024" -> "NOV 2024")
+  const formatMonthBadge = (monthYear) => {
+    if (!monthYear) return ''
+    const parts = monthYear.split(' ')
+    if (parts.length === 2) {
+      return `${parts[0].substring(0, 3).toUpperCase()} ${parts[1]}`
+    }
+    return monthYear.toUpperCase()
+  }
+
   return (
     <section className="min-h-screen">
       {/* Header */}
@@ -246,7 +283,7 @@ export default function MediaVault({ user }) {
               {sortedPhotos.slice(0, visibleCount).map((photo) => (
                 <div
                   key={photo.id}
-                  onClick={() => setLightbox(photo)}
+                  onClick={() => openLightbox(photo)}
                   className="group relative overflow-hidden rounded-xl cursor-pointer bg-stone-800"
                 >
                   <img
@@ -301,36 +338,188 @@ export default function MediaVault({ user }) {
         </div>
       </div>
 
-      {/* Lightbox */}
+      {/* ============================== */}
+      {/* Lightbox — Split Panel Design  */}
+      {/* ============================== */}
       {lightbox && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-sm animate-fade-in"
-          onClick={() => setLightbox(null)}
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/92 backdrop-blur-md animate-fade-in"
+          onClick={closeLightbox}
         >
-          <div className="relative max-w-5xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={() => setLightbox(null)}
-              className="absolute -top-10 right-0 text-stone-400 hover:text-white transition-colors cursor-pointer text-2xl"
+          {/* Close button — top-left */}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 left-4 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-sm text-stone-300 hover:text-white hover:bg-white/20 transition-all cursor-pointer"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+
+          {/* Main container — split layout */}
+          <div
+            className="relative w-full max-w-6xl mx-3 sm:mx-6 max-h-[92vh] flex flex-col lg:flex-row rounded-2xl overflow-hidden"
+            style={{
+              background: '#0c0b09',
+              boxShadow: '0 40px 100px rgba(0,0,0,0.8)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* ===== LEFT: Photo Area ===== */}
+            <div className="relative flex-1 min-h-[300px] lg:min-h-0 bg-black flex items-center justify-center">
+              <img
+                src={lightbox.imageUrl}
+                alt={lightbox.caption}
+                className="w-full h-full max-h-[50vh] lg:max-h-[92vh] object-contain"
+              />
+
+              {/* Previous arrow */}
+              {lightboxIndex > 0 && (
+                <button
+                  onClick={goToPrev}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-full bg-black/50 backdrop-blur-sm text-stone-300 hover:text-white hover:bg-black/70 transition-all cursor-pointer"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              )}
+
+              {/* Next arrow */}
+              {lightboxIndex < sortedPhotos.length - 1 && (
+                <button
+                  onClick={goToNext}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-full bg-black/50 backdrop-blur-sm text-stone-300 hover:text-white hover:bg-black/70 transition-all cursor-pointer"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )}
+
+              {/* Photo counter pill */}
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm text-stone-400 text-xs font-medium">
+                {lightboxIndex + 1} / {sortedPhotos.length}
+              </div>
+            </div>
+
+            {/* ===== RIGHT: Info Panel ===== */}
+            <div
+              className="w-full lg:w-[340px] xl:w-[380px] flex flex-col flex-shrink-0"
+              style={{
+                background: 'linear-gradient(180deg, #161412, #111010)',
+                borderLeft: '1px solid rgba(255,255,255,0.06)',
+              }}
             >
-              ✕
-            </button>
-            <img
-              src={lightbox.imageUrl}
-              alt={lightbox.caption}
-              className="w-full max-h-[80vh] object-contain rounded-lg"
-            />
-            <div className="mt-4">
-              <div>
-                <p className="text-stone-200 text-lg" style={{ fontFamily: 'var(--font-handwriting)' }}>
+              {/* Caption section */}
+              <div className="px-5 sm:px-6 pt-6 pb-4">
+                <h3
+                  className="text-xl sm:text-2xl text-stone-100 leading-snug mb-4"
+                  style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400 }}
+                >
                   {lightbox.caption}
-                </p>
-                <p className="text-stone-500 text-sm mt-1">
-                  <span className="text-gold-500">{lightbox.tag}</span>
+                </h3>
+
+                {/* Month & Filter badges */}
+                <div className="flex flex-wrap items-center gap-2 mb-4">
                   {lightbox.monthYear && (
-                    <> • <span className="text-stone-400">{lightbox.monthYear}</span></>
+                    <span
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-bold tracking-wider uppercase"
+                      style={{
+                        background: 'rgba(196,164,75,0.12)',
+                        color: 'var(--color-gold-500)',
+                        border: '1px solid rgba(196,164,75,0.25)',
+                      }}
+                    >
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      {formatMonthBadge(lightbox.monthYear)}
+                    </span>
                   )}
-                  {' '}• Uploaded by {lightbox.uploadedBy}
-                </p>
+                  {lightbox.tag && (
+                    <span
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-bold tracking-wider uppercase"
+                      style={{
+                        background: 'rgba(255,255,255,0.05)',
+                        color: '#a8a29e',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                      }}
+                    >
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" />
+                      </svg>
+                      {lightbox.tag}
+                    </span>
+                  )}
+                </div>
+
+                {/* Uploader info */}
+                <div className="flex items-center gap-2.5 py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
+                    style={{ background: 'rgba(196,164,75,0.15)', color: 'var(--color-gold-500)' }}
+                  >
+                    {lightbox.uploadedBy ? lightbox.uploadedBy.charAt(0).toUpperCase() : '?'}
+                  </div>
+                  <div>
+                    <p className="text-stone-300 text-sm font-medium leading-tight">{lightbox.uploadedBy || 'Anonymous'}</p>
+                    <p className="text-stone-600 text-[10px]">Uploaded this memory</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="mx-5 sm:mx-6 border-t border-stone-800/60" />
+
+              {/* Comments section */}
+              <div className="flex-1 px-5 sm:px-6 py-5 overflow-y-auto no-scrollbar">
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3"
+                    style={{ background: 'rgba(196,164,75,0.06)', border: '1px solid rgba(196,164,75,0.1)' }}
+                  >
+                    <svg className="w-7 h-7" style={{ color: 'var(--color-gold-500)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                  </div>
+                  <p className="text-stone-500 text-sm italic mb-1">No comments yet.</p>
+                  <p className="text-stone-600 text-xs">Be the first to share a memory.</p>
+                </div>
+              </div>
+
+              {/* Comment input bar */}
+              <div
+                className="px-5 sm:px-6 py-4 flex-shrink-0"
+                style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: 'rgba(12,11,9,0.6)' }}
+              >
+                {user ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Leave a comment..."
+                      className="flex-1 px-4 py-2.5 rounded-xl text-stone-200 placeholder-stone-600 text-sm focus:outline-none"
+                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                      onFocus={(e) => e.target.style.borderColor = 'rgba(196,164,75,0.4)'}
+                      onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
+                    />
+                    <button
+                      className="w-10 h-10 flex items-center justify-center rounded-xl transition-all cursor-pointer hover:brightness-110"
+                      style={{ background: 'var(--color-gold-500)' }}
+                    >
+                      <svg className="w-4 h-4 text-stone-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="w-full py-3 rounded-xl text-sm font-medium text-stone-400 transition-all cursor-pointer"
+                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                  >
+                    Sign in to leave a comment
+                  </button>
+                )}
               </div>
             </div>
           </div>
