@@ -4,7 +4,7 @@ export default function HeroSection({ onStart, onSignIn, user }) {
   const [hovered, setHovered] = useState(false)
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+    <section className="min-h-[100dvh] flex flex-col items-center justify-center relative overflow-hidden">
       {/* Background — warm dark gradient with gold glow */}
       <div
         className="absolute inset-0"
@@ -16,14 +16,14 @@ export default function HeroSection({ onStart, onSignIn, user }) {
 
       {/* Top right — Student Login or Welcome */}
       {user ? (
-        <div className="absolute top-6 right-8 z-20 flex items-center gap-3">
-          <span className="text-stone-400 text-xs tracking-wide">Welcome,</span>
-          <span className="text-gold-500 text-sm font-semibold">{user.name.split(' ')[0]}</span>
+        <div className="absolute top-5 right-4 sm:top-6 sm:right-8 z-20 flex items-center gap-2 sm:gap-3">
+          <span className="text-stone-400 text-[11px] sm:text-xs tracking-wide">Welcome,</span>
+          <span className="text-gold-500 text-xs sm:text-sm font-semibold">{user.name.split(' ')[0]}</span>
         </div>
       ) : (
         <button
           onClick={onSignIn}
-          className="absolute top-6 right-8 z-20 px-5 py-2 border border-stone-500 text-stone-200 text-xs font-semibold tracking-[0.2em] uppercase rounded-sm hover:border-gold-500 hover:text-gold-500 transition-all duration-300 cursor-pointer"
+          className="absolute top-5 right-4 sm:top-6 sm:right-8 z-20 px-4 sm:px-5 py-2 border border-stone-500 text-stone-200 text-[11px] sm:text-xs font-semibold tracking-[0.15em] sm:tracking-[0.2em] uppercase rounded-sm hover:border-gold-500 hover:text-gold-500 transition-all duration-300 cursor-pointer"
         >
           Student Login
         </button>
@@ -31,12 +31,12 @@ export default function HeroSection({ onStart, onSignIn, user }) {
 
       {/* All hero content — shifts up on CTA hover */}
       <div
-        className="relative z-10 text-center px-6 max-w-4xl mx-auto transition-transform duration-500 ease-out"
+        className="relative z-10 text-center px-5 sm:px-6 max-w-4xl mx-auto transition-transform duration-500 ease-out"
         style={{ transform: hovered ? 'translateY(-18px)' : 'translateY(0)' }}
       >
         {/* Tagline — gold italic handwriting above title */}
         <p
-          className="text-gold-500 text-xl md:text-2xl mb-6 animate-fade-in"
+          className="text-gold-500 text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6 animate-fade-in"
           style={{
             fontFamily: 'var(--font-handwriting)',
             fontStyle: 'italic',
@@ -47,7 +47,7 @@ export default function HeroSection({ onStart, onSignIn, user }) {
 
         {/* Main Title */}
         <h1
-          className="mb-8 leading-[1.1] animate-fade-in-up"
+          className="mb-6 sm:mb-8 leading-[1.1] animate-fade-in-up"
           style={{
             fontFamily: 'var(--font-serif)',
             animationDelay: '0.15s',
@@ -55,25 +55,26 @@ export default function HeroSection({ onStart, onSignIn, user }) {
           }}
         >
           <span
-            className="text-stone-100 text-6xl md:text-8xl lg:text-[7rem] font-bold whitespace-nowrap"
+            className="text-stone-100 text-5xl sm:text-6xl md:text-8xl lg:text-[7rem] font-bold"
             style={{ fontStyle: 'normal' }}
           >
             Batch{' '}
           </span>
           <span
-            className="text-stone-200 text-6xl md:text-8xl lg:text-[7rem] whitespace-nowrap"
+            className="text-stone-200 text-5xl sm:text-6xl md:text-8xl lg:text-[7rem]"
             style={{ fontStyle: 'italic', fontWeight: 400 }}
           >
             2022
           </span>
+          <br className="sm:hidden" />
           <span
-            className="text-stone-400 text-5xl md:text-7xl lg:text-[6rem]"
+            className="text-stone-400 text-4xl sm:text-5xl md:text-7xl lg:text-[6rem]"
             style={{ fontWeight: 300 }}
           >
             —
           </span>
           <span
-            className="text-stone-200 text-6xl md:text-8xl lg:text-[7rem]"
+            className="text-stone-200 text-5xl sm:text-6xl md:text-8xl lg:text-[7rem]"
             style={{ fontStyle: 'italic', fontWeight: 400 }}
           >
             26
@@ -82,7 +83,7 @@ export default function HeroSection({ onStart, onSignIn, user }) {
 
         {/* Gold underline */}
         <div
-          className="w-16 h-[2px] mx-auto mb-10 animate-fade-in-up"
+          className="w-12 sm:w-16 h-[2px] mx-auto mb-8 sm:mb-10 animate-fade-in-up"
           style={{
             background: 'linear-gradient(to right, transparent, var(--color-gold-500), transparent)',
             animationDelay: '0.25s',
@@ -92,7 +93,7 @@ export default function HeroSection({ onStart, onSignIn, user }) {
 
         {/* Description */}
         <p
-          className="text-stone-400 text-base md:text-lg max-w-xl mx-auto mb-14 leading-relaxed animate-fade-in-up"
+          className="text-stone-400 text-sm sm:text-base md:text-lg max-w-xl mx-auto mb-10 sm:mb-14 leading-relaxed animate-fade-in-up"
           style={{ animationDelay: '0.4s', animationFillMode: 'backwards' }}
         >
           Four years of laughter, late nights, and lessons learned. Join us as
@@ -104,19 +105,19 @@ export default function HeroSection({ onStart, onSignIn, user }) {
           onClick={onStart}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          className="group inline-flex flex-col items-center gap-5 cursor-pointer animate-fade-in-up"
+          className="group inline-flex flex-col items-center gap-4 sm:gap-5 cursor-pointer animate-fade-in-up"
           style={{ animationDelay: '0.55s', animationFillMode: 'backwards' }}
         >
-          <span className="text-stone-500 text-[11px] tracking-[0.3em] uppercase font-medium group-hover:text-gold-500 transition-colors duration-300">
+          <span className="text-stone-500 text-[10px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.3em] uppercase font-medium group-hover:text-gold-500 transition-colors duration-300">
             Click to start the journey
           </span>
           {/* Vertical line */}
-          <span className="hero-line block w-[1px] h-16 bg-gradient-to-b from-stone-500 to-transparent group-hover:from-gold-500 transition-colors duration-300" />
+          <span className="hero-line block w-[1px] h-12 sm:h-16 bg-gradient-to-b from-stone-500 to-transparent group-hover:from-gold-500 transition-colors duration-300" />
         </button>
       </div>
 
       {/* Bottom gradient fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-stone-900 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-32 bg-gradient-to-t from-stone-900 to-transparent" />
     </section>
   )
 }

@@ -66,20 +66,20 @@ export default function TheWall({ user }) {
   }
 
   return (
-    <section className="py-16 md:py-24 relative" style={{ background: 'linear-gradient(180deg, #0c1220 0%, #111827 40%, #0f172a 100%)' }}>
-      <div className="px-8">
+    <section className="py-12 sm:py-16 md:py-24 relative" style={{ background: 'linear-gradient(180deg, #0c1220 0%, #111827 40%, #0f172a 100%)' }}>
+      <div className="px-4 sm:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gold-500/10 border border-gold-500/40 text-gold-500 text-xs tracking-widest uppercase font-medium rounded-full mb-6">
+        <div className="text-center mb-8 sm:mb-12">
+          <span className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 bg-gold-500/10 border border-gold-500/40 text-gold-500 text-[10px] sm:text-xs tracking-widest uppercase font-medium rounded-full mb-4 sm:mb-6">
             🧡 Final Goodbyes
           </span>
           <h2
-            className="text-5xl md:text-6xl lg:text-7xl font-bold text-stone-100 mb-5"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-stone-100 mb-4 sm:mb-5"
             style={{ fontFamily: 'var(--font-serif)' }}
           >
             Message Wall of Reflection
           </h2>
-          <p className="text-stone-400 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-stone-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-2">
             A space to leave your final words, memories, and wishes. These notes
             will remain here as a testament to our journey.
           </p>
@@ -101,7 +101,7 @@ export default function TheWall({ user }) {
 
         {/* Sticky Notes Grid */}
         {!loading && messages.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
             {messages.slice(0, visibleCount).map((msg, i) => (
               <div
                 key={msg.id || i}
@@ -131,9 +131,9 @@ export default function TheWall({ user }) {
       {/* Floating Write Button */}
       <button
         onClick={() => setShowForm(true)}
-        className="fixed bottom-8 right-8 z-30 px-6 py-3 bg-gold-500 hover:bg-gold-600 text-stone-900 rounded-full shadow-lg shadow-gold-500/20 flex items-center gap-2 text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-105 cursor-pointer"
+        className="fixed bottom-5 right-4 sm:bottom-8 sm:right-8 z-30 px-4 sm:px-6 py-2.5 sm:py-3 bg-gold-500 hover:bg-gold-600 text-stone-900 rounded-full shadow-lg shadow-gold-500/20 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-105 cursor-pointer"
       >
-        ✉️ Write a Message
+        ✉️ <span className="hidden xs:inline">Write a </span>Message
       </button>
 
       {/* Write Message Modal */}
@@ -143,7 +143,7 @@ export default function TheWall({ user }) {
           onClick={() => setShowForm(false)}
         >
           <div
-            className="rounded-2xl p-8 w-full max-w-lg mx-4 shadow-2xl relative"
+            className="rounded-2xl p-5 sm:p-8 w-full max-w-lg mx-3 sm:mx-4 shadow-2xl relative"
             style={{ background: '#faf8f5' }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -159,7 +159,7 @@ export default function TheWall({ user }) {
 
             {/* Title */}
             <h3
-              className="text-3xl mb-8"
+              className="text-2xl sm:text-3xl mb-5 sm:mb-8"
               style={{ fontFamily: 'var(--font-handwriting)', color: '#2d2a26' }}
             >
               Leave a Note...
@@ -171,7 +171,7 @@ export default function TheWall({ user }) {
                 value={newMsg}
                 onChange={(e) => setNewMsg(e.target.value)}
                 placeholder="I'll never forget..."
-                rows={6}
+                rows={4}
                 className="w-full bg-transparent border-none outline-none resize-none text-lg mb-4"
                 style={{
                   fontFamily: 'var(--font-handwriting)',

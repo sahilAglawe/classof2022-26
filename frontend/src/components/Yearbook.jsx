@@ -125,15 +125,15 @@ export default function Yearbook({ user }) {
   return (
     <section className="min-h-screen">
       {/* Header */}
-      <div className="bg-stone-950 pt-10 pb-14">
-        <div className="px-8 text-center">
+      <div className="bg-stone-950 pt-8 sm:pt-10 pb-10 sm:pb-14">
+        <div className="px-4 sm:px-8 text-center">
           <h2
-            className="text-6xl md:text-7xl lg:text-8xl text-stone-100 mb-5"
+            className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-stone-100 mb-4 sm:mb-5"
             style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400 }}
           >
             The Class of '26
           </h2>
-          <p className="text-stone-400 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+          <p className="text-stone-400 text-sm sm:text-base md:text-lg max-w-xl mx-auto leading-relaxed">
             Faces that defined our journey. Moments that became memories.
             Click a card to sign their yearbook.
           </p>
@@ -141,10 +141,10 @@ export default function Yearbook({ user }) {
       </div>
 
       {/* Content */}
-      <div className="bg-stone-950 py-10">
-        <div className="px-8">
+      <div className="bg-stone-950 py-6 sm:py-10">
+        <div className="px-4 sm:px-8">
           {/* Search & Filter */}
-          <div className="flex flex-col md:flex-row gap-4 mb-10">
+          <div className="flex flex-col md:flex-row gap-3 sm:gap-4 mb-8 sm:mb-10">
             <div className="flex-1 relative">
               <svg
                 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-500"
@@ -157,7 +157,7 @@ export default function Yearbook({ user }) {
                 placeholder="Find a classmate..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-stone-900 border border-stone-700 rounded-lg text-stone-100 placeholder-stone-500 focus:outline-none focus:border-gold-500 transition-colors"
+                className="w-full pl-12 pr-4 py-3 bg-stone-900 border border-stone-700 rounded-lg text-stone-100 placeholder-stone-500 focus:outline-none focus:border-gold-500 transition-colors text-sm sm:text-base"
               />
             </div>
             <div className="flex flex-wrap gap-2">
@@ -165,7 +165,7 @@ export default function Yearbook({ user }) {
                 <button
                   key={m}
                   onClick={() => setFilter(m)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
+                  className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 cursor-pointer ${
                     filter === m
                       ? 'bg-gold-500 text-stone-900'
                       : 'bg-stone-900 border border-stone-700 text-stone-400 hover:border-stone-400 hover:text-stone-200'
@@ -178,7 +178,7 @@ export default function Yearbook({ user }) {
           </div>
 
           {/* Divider */}
-          <div className="border-t border-stone-700 mb-10"></div>
+          <div className="border-t border-stone-700 mb-6 sm:mb-10"></div>
 
           {/* Loading */}
           {loading && (
@@ -189,7 +189,7 @@ export default function Yearbook({ user }) {
 
           {/* Student Grid */}
           {!loading && (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
               {filtered.slice(0, visibleCount).map((student) => (
                 <div
                   key={student.uid}
@@ -298,19 +298,19 @@ export default function Yearbook({ user }) {
             )}
 
             <div
-              className="flex flex-col md:flex-row w-full max-w-4xl max-h-[85vh] mx-4 rounded-xl overflow-hidden shadow-2xl border border-stone-800"
+              className="flex flex-col md:flex-row w-full max-w-4xl max-h-[90vh] sm:max-h-[85vh] mx-3 sm:mx-4 rounded-xl overflow-hidden shadow-2xl border border-stone-800"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Left — Photo */}
-              <div className="relative w-full md:w-1/2 bg-stone-900 flex-shrink-0">
+              <div className="relative w-full md:w-1/2 bg-stone-900 flex-shrink-0 min-h-0">
                 {selectedStudent.profilePic ? (
                   <img
                     src={selectedStudent.profilePic}
                     alt={selectedStudent.name}
-                    className="w-full h-64 md:h-full object-cover"
+                    className="w-full h-48 sm:h-64 md:h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-64 md:h-full flex items-center justify-center bg-gradient-to-br from-stone-700 to-stone-800">
+                  <div className="w-full h-48 sm:h-64 md:h-full flex items-center justify-center bg-gradient-to-br from-stone-700 to-stone-800">
                     <span className="text-7xl md:text-9xl font-bold text-stone-500" style={{ fontFamily: 'var(--font-serif)' }}>
                       {getInitials(selectedStudent.name)}
                     </span>
@@ -336,9 +336,9 @@ export default function Yearbook({ user }) {
                 />
 
                 {/* Name overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
                   <h3
-                    className="text-2xl md:text-3xl font-bold text-stone-100 mb-1"
+                    className="text-xl sm:text-2xl md:text-3xl font-bold text-stone-100 mb-1"
                     style={{ fontFamily: 'var(--font-serif)' }}
                   >
                     {selectedStudent.name}
@@ -356,9 +356,9 @@ export default function Yearbook({ user }) {
               </div>
 
               {/* Right — Messages panel */}
-              <div className="w-full md:w-1/2 bg-stone-950 flex flex-col max-h-[85vh]">
+              <div className="w-full md:w-1/2 bg-stone-950 flex flex-col min-h-0 flex-1">
                 {/* Header */}
-                <div className="flex items-center justify-between p-5 border-b border-stone-800">
+                <div className="flex items-center justify-between p-4 sm:p-5 border-b border-stone-800">
                   <div>
                     <p className="text-stone-500 text-xs mb-1" style={{ fontFamily: 'var(--font-handwriting)' }}>///</p>
                     <h4 className="text-stone-200 text-sm font-semibold tracking-wide">
@@ -381,7 +381,7 @@ export default function Yearbook({ user }) {
                 </div>
 
                 {/* Messages list */}
-                <div className="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3 sm:space-y-4 no-scrollbar">
                   {messagesLoading ? (
                     <div className="flex items-center justify-center h-full">
                       <p className="text-stone-500 italic">Loading messages...</p>
@@ -414,7 +414,7 @@ export default function Yearbook({ user }) {
                 </div>
 
                 {/* Message input */}
-                <div className="p-5 border-t border-stone-800">
+                <div className="p-4 sm:p-5 border-t border-stone-800">
                   <div className="relative">
                     <textarea
                       value={message}

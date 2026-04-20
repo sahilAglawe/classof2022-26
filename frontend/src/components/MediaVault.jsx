@@ -214,16 +214,16 @@ export default function MediaVault({ user }) {
   return (
     <section className="min-h-screen">
       {/* Header */}
-      <div className="bg-stone-950 pt-10 pb-6">
-        <div className="px-8">
+      <div className="bg-stone-950 pt-8 sm:pt-10 pb-4 sm:pb-6">
+        <div className="px-4 sm:px-8">
           <h2
-            className="text-6xl md:text-7xl lg:text-8xl text-stone-100 mb-5"
+            className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-stone-100 mb-3 sm:mb-5"
             style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400 }}
           >
             The Archive
           </h2>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <p className="text-stone-400 text-base md:text-lg max-w-md leading-relaxed">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-4">
+            <p className="text-stone-400 text-sm sm:text-base md:text-lg max-w-md leading-relaxed">
               A cinematic collection of fleeting moments, frozen in time. From the first lecture to the final goodbye.
             </p>
 
@@ -231,7 +231,7 @@ export default function MediaVault({ user }) {
             {user && (
               <button
                 onClick={() => setShowUpload(true)}
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-gold-500 text-stone-900 text-sm font-semibold tracking-wide rounded-lg hover:brightness-110 transition-all cursor-pointer self-start md:self-auto"
+                className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 bg-gold-500 text-stone-900 text-xs sm:text-sm font-semibold tracking-wide rounded-lg hover:brightness-110 transition-all cursor-pointer self-start sm:self-auto flex-shrink-0"
               >
                 ＋ Add Photos
               </button>
@@ -241,15 +241,15 @@ export default function MediaVault({ user }) {
       </div>
 
       {/* Content */}
-      <div className="bg-stone-950 py-6">
-        <div className="px-8">
-          {/* Filters */}
-          <div className="flex flex-wrap items-center gap-2 mb-6">
+      <div className="bg-stone-950 py-4 sm:py-6">
+        <div className="px-4 sm:px-8">
+          {/* Filters — scrollable on mobile */}
+          <div className="flex items-center gap-2 mb-4 sm:mb-6 overflow-x-auto no-scrollbar pb-1">
             {filterOptions.map((f) => (
               <button
                 key={f}
                 onClick={() => { setActiveFilter(f); setVisibleCount(6) }}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 cursor-pointer flex-shrink-0 ${
                   activeFilter === f
                     ? 'bg-gold-500 text-stone-900'
                     : 'bg-stone-900 border border-stone-700 text-stone-400 hover:border-stone-400 hover:text-stone-200'
@@ -261,7 +261,7 @@ export default function MediaVault({ user }) {
 
             <button
               onClick={() => setNewestFirst(!newestFirst)}
-              className="ml-auto px-3 py-2 bg-stone-900 border border-stone-700 rounded-full text-stone-400 text-sm cursor-pointer hover:text-stone-200 hover:border-stone-400 transition-all"
+              className="ml-auto px-3 py-1.5 sm:py-2 bg-stone-900 border border-stone-700 rounded-full text-stone-400 text-xs sm:text-sm cursor-pointer hover:text-stone-200 hover:border-stone-400 transition-all flex-shrink-0"
             >
               {newestFirst ? '↓ Newest' : '↑ Oldest'}
             </button>
@@ -279,7 +279,7 @@ export default function MediaVault({ user }) {
 
           {/* Photo Grid */}
           {!loading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {sortedPhotos.slice(0, visibleCount).map((photo) => (
                 <div
                   key={photo.id}
@@ -358,7 +358,7 @@ export default function MediaVault({ user }) {
 
           {/* Main container — split layout */}
           <div
-            className="relative w-full max-w-6xl mx-3 sm:mx-6 max-h-[92vh] flex flex-col lg:flex-row rounded-2xl overflow-hidden"
+            className="relative w-full max-w-6xl mx-2 sm:mx-6 max-h-[95vh] flex flex-col lg:flex-row rounded-2xl overflow-hidden"
             style={{
               background: '#0c0b09',
               boxShadow: '0 40px 100px rgba(0,0,0,0.8)',
@@ -366,11 +366,11 @@ export default function MediaVault({ user }) {
             onClick={(e) => e.stopPropagation()}
           >
             {/* ===== LEFT: Photo Area ===== */}
-            <div className="relative flex-1 min-h-[300px] lg:min-h-0 bg-black flex items-center justify-center">
+            <div className="relative flex-1 min-h-[45vw] sm:min-h-[300px] lg:min-h-0 bg-black flex items-center justify-center">
               <img
                 src={lightbox.imageUrl}
                 alt={lightbox.caption}
-                className="w-full h-full max-h-[50vh] lg:max-h-[92vh] object-contain"
+                className="w-full h-full max-h-[40vh] sm:max-h-[50vh] lg:max-h-[92vh] object-contain"
               />
 
               {/* Previous arrow */}
@@ -405,16 +405,16 @@ export default function MediaVault({ user }) {
 
             {/* ===== RIGHT: Info Panel ===== */}
             <div
-              className="w-full lg:w-[340px] xl:w-[380px] flex flex-col flex-shrink-0"
+              className="w-full lg:w-[300px] xl:w-[340px] flex flex-col flex-shrink-0"
               style={{
                 background: 'linear-gradient(180deg, #161412, #111010)',
                 borderLeft: '1px solid rgba(255,255,255,0.06)',
               }}
             >
               {/* Caption section */}
-              <div className="px-5 sm:px-6 pt-6 pb-4">
+              <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4">
                 <h3
-                  className="text-xl sm:text-2xl text-stone-100 leading-snug mb-4"
+                  className="text-lg sm:text-xl lg:text-2xl text-stone-100 leading-snug mb-3 sm:mb-4"
                   style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400 }}
                 >
                   {lightbox.caption}
@@ -473,7 +473,7 @@ export default function MediaVault({ user }) {
               <div className="mx-5 sm:mx-6 border-t border-stone-800/60" />
 
               {/* Comments section */}
-              <div className="flex-1 px-5 sm:px-6 py-5 overflow-y-auto no-scrollbar">
+              <div className="flex-1 px-4 sm:px-6 py-4 overflow-y-auto no-scrollbar">
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <div
                     className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3"
@@ -490,7 +490,7 @@ export default function MediaVault({ user }) {
 
               {/* Comment input bar */}
               <div
-                className="px-5 sm:px-6 py-4 flex-shrink-0"
+                className="px-4 sm:px-6 py-3 sm:py-4 flex-shrink-0"
                 style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: 'rgba(12,11,9,0.6)' }}
               >
                 {user ? (

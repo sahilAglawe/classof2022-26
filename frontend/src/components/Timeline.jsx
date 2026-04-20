@@ -71,12 +71,12 @@ function TimelineNode({ item, index }) {
 
   if (isCenter) {
     return (
-      <div ref={ref} className="relative flex flex-col items-center mb-24">
+      <div ref={ref} className="relative flex flex-col items-center mb-16 sm:mb-24">
         {/* Year badge */}
-        <div className="year-badge mb-8">{item.year}</div>
+        <div className="year-badge mb-6 sm:mb-8">{item.year}</div>
 
         <div
-          className={`max-w-2xl transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          className={`w-full max-w-2xl transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           style={{ transitionDelay: '0.2s' }}
         >
@@ -95,14 +95,14 @@ function TimelineNode({ item, index }) {
   }
 
   return (
-    <div ref={ref} className="relative mb-24">
+    <div ref={ref} className="relative mb-16 sm:mb-24">
       {/* Year badge - centered */}
-      <div className="flex justify-center mb-12">
+      <div className="flex justify-center mb-8 sm:mb-12">
         <div className="year-badge">{item.year}</div>
       </div>
 
       <div
-        className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center ${isRight ? 'lg:direction-rtl' : ''
+        className={`grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 items-center ${isRight ? 'lg:direction-rtl' : ''
           }`}
       >
         {/* Image side */}
@@ -115,7 +115,13 @@ function TimelineNode({ item, index }) {
             }`}
           style={{ transitionDelay: '0.2s' }}
         >
-          <div className={`polaroid ${isRight ? 'polaroid-right' : ''} group/img`} style={{ maxWidth: '500px', margin: isRight ? '0 0 0 auto' : undefined }}>
+          <div
+            className={`polaroid ${isRight ? 'polaroid-right' : ''} group/img mx-auto lg:mx-0`}
+            style={{
+              maxWidth: '500px',
+              margin: isRight ? undefined : undefined,
+            }}
+          >
             <img
               src={item.image}
               alt={item.title}
@@ -127,7 +133,7 @@ function TimelineNode({ item, index }) {
 
         {/* Text side */}
         <div
-          className={`${isRight ? 'lg:order-1' : 'lg:order-2'} transition-all duration-700 ${visible
+          className={`${isRight ? 'lg:order-1' : 'lg:order-2'} transition-all duration-700 text-center lg:text-left ${visible
               ? 'opacity-100 translate-x-0'
               : isRight
                 ? 'opacity-0 -translate-x-16'
@@ -136,12 +142,12 @@ function TimelineNode({ item, index }) {
           style={{ transitionDelay: '0.4s' }}
         >
           <h3
-            className="text-3xl md:text-4xl font-bold text-stone-100 mb-4"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-stone-100 mb-3 sm:mb-4"
             style={{ fontFamily: 'var(--font-serif)' }}
           >
             {item.title}
           </h3>
-          <p className="text-stone-400 text-lg leading-relaxed">{item.description}</p>
+          <p className="text-stone-400 text-base sm:text-lg leading-relaxed">{item.description}</p>
         </div>
       </div>
     </div>
@@ -150,18 +156,18 @@ function TimelineNode({ item, index }) {
 
 export default function Timeline() {
   return (
-    <section id="timeline" className="relative py-16 md:py-24">
+    <section id="timeline" className="relative py-12 sm:py-16 md:py-24">
       {/* Central timeline line (visible on large screens) */}
       <div className="hidden lg:block timeline-line" />
 
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section header */}
-        <div className="text-center mb-20">
-          <span className="inline-block px-4 py-1.5 border border-gold-500 text-gold-500 text-xs tracking-widest uppercase font-medium rounded-full mb-6">
+        <div className="text-center mb-12 sm:mb-20">
+          <span className="inline-block px-4 py-1.5 border border-gold-500 text-gold-500 text-xs tracking-widest uppercase font-medium rounded-full mb-4 sm:mb-6">
             Our History
           </span>
           <h2
-            className="text-4xl md:text-5xl font-bold text-stone-100"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-stone-100"
             style={{ fontFamily: 'var(--font-serif)' }}
           >
             The Journey: 2022–2026
@@ -174,9 +180,9 @@ export default function Timeline() {
         ))}
 
         {/* Closing quote — immediately after last photo */}
-        <div className="text-center pt-8 pb-4">
+        <div className="text-center pt-6 sm:pt-8 pb-4">
           <p
-            className="text-xl md:text-2xl text-stone-300 leading-relaxed"
+            className="text-lg sm:text-xl md:text-2xl text-stone-300 leading-relaxed"
             style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic' }}
           >
             Four years. Countless memories. One unforgettable journey.

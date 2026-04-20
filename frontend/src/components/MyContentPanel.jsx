@@ -154,7 +154,7 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
       onClick={onClose}
     >
       <div
-        className="w-full max-w-3xl mx-3 sm:mx-4 max-h-[88vh] flex flex-col rounded-2xl overflow-hidden"
+        className="w-full max-w-3xl mx-2 sm:mx-4 max-h-[95vh] sm:max-h-[88vh] flex flex-col rounded-2xl overflow-hidden"
         style={{
           background: 'linear-gradient(160deg, #1e1c18, #151310)',
           border: '1px solid rgba(196, 164, 75, 0.15)',
@@ -169,10 +169,10 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
         />
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 sm:px-7 pt-5 pb-3 flex-shrink-0">
+        <div className="flex items-center justify-between px-4 sm:px-7 pt-4 sm:pt-5 pb-2 sm:pb-3 flex-shrink-0">
           <div>
             <h2
-              className="text-2xl sm:text-3xl"
+              className="text-xl sm:text-2xl sm:text-3xl"
               style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', color: 'var(--color-gold-500)' }}
             >
               My Collection
@@ -190,10 +190,10 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-1 px-5 sm:px-7 pb-4 flex-shrink-0">
+        <div className="flex items-center gap-1 px-4 sm:px-7 pb-3 sm:pb-4 flex-shrink-0">
           <button
             onClick={() => setActiveTab('media')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer ${
+            className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 cursor-pointer ${
               activeTab === 'media'
                 ? 'bg-gold-500/15 text-gold-500 border border-gold-500/30'
                 : 'text-stone-400 hover:text-stone-200 border border-transparent hover:bg-stone-800/50'
@@ -209,7 +209,7 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
           </button>
           <button
             onClick={() => setActiveTab('yearbook')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer ${
+            className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 cursor-pointer ${
               activeTab === 'yearbook'
                 ? 'bg-gold-500/15 text-gold-500 border border-gold-500/30'
                 : 'text-stone-400 hover:text-stone-200 border border-transparent hover:bg-stone-800/50'
@@ -226,10 +226,10 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
         </div>
 
         {/* Divider */}
-        <div className="mx-5 sm:mx-7 border-t border-stone-800/60 flex-shrink-0" />
+        <div className="mx-4 sm:mx-7 border-t border-stone-800/60 flex-shrink-0" />
 
         {/* Content — scrollable */}
-        <div className="flex-1 overflow-y-auto px-5 sm:px-7 py-5 no-scrollbar">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-7 py-4 sm:py-5 no-scrollbar">
 
           {/* =============================== */}
           {/* MY PHOTOS TAB */}
@@ -254,7 +254,7 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
                   <p className="text-stone-600 text-xs mt-1">Your Media Vault uploads will appear here</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
                   {myMedia.map((item) => (
                     <div
                       key={item.id}
