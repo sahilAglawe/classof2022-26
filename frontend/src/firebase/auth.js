@@ -11,6 +11,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore'
 import { auth, db } from './config'
+import { sendRegistrationPendingEmail } from './email'
 
 // ==========================================
 // REGISTER — Creates user + saves to Firestore
@@ -36,7 +37,10 @@ export async function registerUser({ name, email, branch, rollNo, password }) {
   // 3. Sign out immediately (user can't use app until approved)
   await signOut(auth)
 
-  return { success: true, message: 'Registration successful! Awaiting admin approval.' }
+  // 4. Send "pending approval" email notification
+  await sendRegistrationPendingEmail({ name, email })
+
+  return { success: true, message: 'Registration successful! A confirmation email has been sent. Awaiting admin approval.' }
 }
 
 // ==========================================

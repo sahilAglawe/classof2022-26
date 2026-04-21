@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getAllUsers, approveUser, rejectUser } from '../firebase/firestore'
+import { sendDecisionEmail } from '../firebase/email'
 
 export default function AdminDashboard({ user, onBack }) {
   const [users, setUsers] = useState([])
@@ -27,6 +28,17 @@ export default function AdminDashboard({ user, onBack }) {
     setActionLoading(uid)
     try {
       await approveUser(uid)
+
+      // Send approval email to the user
+      const targetUser = users.find((u) => u.uid === uid)
+      if (targetUser?.email) {
+        await sendDecisionEmail({
+          name: targetUser.name,
+          email: targetUser.email,
+          status: 'approved',
+        })
+      }
+
       setUsers((prev) =>
         prev.map((u) => (u.uid === uid ? { ...u, status: 'approved' } : u))
       )
@@ -41,6 +53,17 @@ export default function AdminDashboard({ user, onBack }) {
     setActionLoading(uid)
     try {
       await rejectUser(uid)
+
+      // Send rejection email to the user
+      const targetUser = users.find((u) => u.uid === uid)
+      if (targetUser?.email) {
+        await sendDecisionEmail({
+          name: targetUser.name,
+          email: targetUser.email,
+          status: 'rejected',
+        })
+      }
+
       setUsers((prev) =>
         prev.map((u) => (u.uid === uid ? { ...u, status: 'rejected' } : u))
       )
