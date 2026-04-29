@@ -14,7 +14,7 @@ const timelineData = [
     year: '2023',
     title: 'Finding Our Feet',
     description:
-      'The library became our second home. We stressed over midterms, but the coffee breaks in between made it all bearable.',
+      'The library became our second home. We stressed over midterms, but those class bunks in between made everything feel lighter.',
     image: '/images/library-study.png',
     caption: 'Library all-nighter... again 📚',
     side: 'right',
