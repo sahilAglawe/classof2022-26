@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getWallMessages, addWallMessage } from '../firebase/firestore'
+import { getWallMessages, addWallMessage, deleteWallMessage } from '../firebase/firestore'
 
 const noteColors = [
   'bg-amber-100 text-amber-900',
@@ -12,7 +12,7 @@ const noteColors = [
   'bg-pink-100 text-pink-900',
 ]
 
-export default function TheWall({ user }) {
+export default function TheWall({ user, isAdmin }) {
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -21,6 +21,8 @@ export default function TheWall({ user }) {
   const [anonymous, setAnonymous] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [visibleCount, setVisibleCount] = useState(8)
+  const [deleteTarget, setDeleteTarget] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   // Fetch messages from Firestore on mount
   useEffect(() => {
@@ -65,6 +67,20 @@ export default function TheWall({ user }) {
     }
   }
 
+  const handleDelete = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
+    try {
+      await deleteWallMessage(deleteTarget)
+      await fetchMessages()
+    } catch (err) {
+      console.error('Error deleting message:', err)
+    } finally {
+      setDeleting(false)
+      setDeleteTarget(null)
+    }
+  }
+
   return (
     <section className="py-12 sm:py-16 md:py-24 relative" style={{ background: 'linear-gradient(180deg, #0c1220 0%, #111827 40%, #0f172a 100%)' }}>
       <div className="px-4 sm:px-8">
@@ -105,9 +121,20 @@ export default function TheWall({ user }) {
             {messages.slice(0, visibleCount).map((msg, i) => (
               <div
                 key={msg.id || i}
-                className={`sticky-note ${noteColors[msg.color || 0]}`}
+                className={`sticky-note ${noteColors[msg.color || 0]} relative group`}
                 style={{ animationDelay: `${i * 0.05}s` }}
               >
+                {isAdmin && (
+                  <button
+                    onClick={() => setDeleteTarget(msg.id)}
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer hover:bg-red-500/20 text-red-500"
+                    title="Delete message"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                )}
                 <p className="mb-3 leading-relaxed">{msg.text}</p>
                 <p className="text-sm opacity-70 font-sans font-medium">— {msg.author}</p>
               </div>
@@ -230,6 +257,42 @@ export default function TheWall({ user }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in"
+          onClick={() => setDeleteTarget(null)}
+        >
+          <div
+            className="rounded-2xl p-6 sm:p-8 w-full max-w-sm mx-4 shadow-2xl text-center"
+            style={{ background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.1)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-stone-100 mb-2">Delete Message?</h3>
+            <p className="text-stone-400 text-sm mb-6">This action cannot be undone. The message will be permanently removed from the wall.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="flex-1 px-4 py-2.5 rounded-full border border-stone-600 text-stone-300 text-sm font-medium hover:border-stone-400 transition-all duration-200 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex-1 px-4 py-2.5 rounded-full bg-red-500 hover:bg-red-600 text-white text-sm font-semibold transition-all duration-200 cursor-pointer disabled:opacity-50"
+              >
+                {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
           </div>
         </div>
       )}

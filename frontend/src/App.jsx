@@ -97,7 +97,7 @@ function App() {
           {currentPage === 'journey' && <Timeline />}
           {currentPage === 'yearbook' && <Yearbook user={user} />}
           {currentPage === 'media' && <MediaVault user={user} />}
-          {currentPage === 'wall' && <TheWall user={user} />}
+          {currentPage === 'wall' && <TheWall user={user} isAdmin={isAdmin} />}
         </main>
       )}
 
