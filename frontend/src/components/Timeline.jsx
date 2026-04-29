@@ -5,8 +5,8 @@ const timelineData = [
     year: '2022',
     title: 'The First Hello',
     description:
-      '"Do you know where Hall B is?" That was the question that started it all. We were lost, nervous, and carrying way too many bags.',
-    image: '/images/campus-gate.png',
+      '"Do you know where CSE Department is?" That was the question that started it all. We were lost, nervous, and carrying way too many bags.',
+    image: '/images/bit-gate.jpg',
     caption: 'First day on campus 🍂',
     side: 'left',
   },
@@ -108,10 +108,10 @@ function TimelineNode({ item, index }) {
         {/* Image side */}
         <div
           className={`${isRight ? 'lg:order-2' : 'lg:order-1'} transition-all duration-700 ${visible
-              ? 'opacity-100 translate-x-0'
-              : isRight
-                ? 'opacity-0 translate-x-16'
-                : 'opacity-0 -translate-x-16'
+            ? 'opacity-100 translate-x-0'
+            : isRight
+              ? 'opacity-0 translate-x-16'
+              : 'opacity-0 -translate-x-16'
             }`}
           style={{ transitionDelay: '0.2s' }}
         >
@@ -134,10 +134,10 @@ function TimelineNode({ item, index }) {
         {/* Text side */}
         <div
           className={`${isRight ? 'lg:order-1' : 'lg:order-2'} transition-all duration-700 text-center lg:text-left ${visible
-              ? 'opacity-100 translate-x-0'
-              : isRight
-                ? 'opacity-0 -translate-x-16'
-                : 'opacity-0 translate-x-16'
+            ? 'opacity-100 translate-x-0'
+            : isRight
+              ? 'opacity-0 -translate-x-16'
+              : 'opacity-0 translate-x-16'
             }`}
           style={{ transitionDelay: '0.4s' }}
         >
