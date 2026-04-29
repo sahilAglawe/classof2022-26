@@ -23,7 +23,7 @@ const timelineData = [
     year: '2023',
     title: 'We Became the Seniors',
     description:
-      "It was our turn to roll out the welcome mat. We planned, rehearsed, and stayed up way too late — all so our juniors could have a night to remember. Turns out, hosting is harder than attending.",
+      "It was the beginning when we first stepped into the department building.We made endless memories there, and before we knew it, it became our second home.From lost juniors to confident seniors, we grew with every moment.And now, those memories are something we’ll carry forever.",
     image: '/images/freshers-night.png',
     caption: "Freshers' night — their first, our finest 🎊",
     side: 'left',
