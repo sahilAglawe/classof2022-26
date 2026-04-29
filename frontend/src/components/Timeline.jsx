@@ -25,7 +25,7 @@ const timelineData = [
     description:
       "It was the beginning when we first stepped into the department building. We made endless memories there, and before we knew it, it became our second home. From lost juniors to confident seniors, we grew with every moment. And now, those memories are something we’ll carry forever.",
     image: '/images/freshers-night.png',
-    caption: "From juniors to seniors 🎓✨",
+    caption: "From juniors to seniors ✨",
     side: 'left',
   },
   {
