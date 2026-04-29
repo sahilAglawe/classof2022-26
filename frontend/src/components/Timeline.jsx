@@ -32,7 +32,7 @@ const timelineData = [
     year: '2025',
     title: 'A Goodbye Worth Remembering',
     description:
-      'We weren\'t just saying goodbye to our seniors — we were saying goodbye to a version of ourselves. The farewell wasn\'t just theirs. It was ours too.',
+      'We weren’t just saying goodbye to our college — we were saying goodbye to a part of ourselves. A chapter ends, but the memories stay forever.',
     image: '/images/farewell.png',
     caption: 'The farewell that hit different 💐',
     side: 'right',
