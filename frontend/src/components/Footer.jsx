@@ -14,6 +14,7 @@ export default function Footer({ onNavClick, currentPage }) {
             </svg>
           </button>
         )}
+        
 
         {/* Divider with globe */}
         <div className="flex items-center justify-center gap-4 mb-6">
