@@ -24,7 +24,9 @@ export default function TheWall({ user, isAdmin }) {
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [deleting, setDeleting] = useState(false)
 
-  // Fetch messages from Firestore on mount
+
+  // Fetch messages from Firestore on mount...
+
   useEffect(() => {
     fetchMessages()
   }, [])
