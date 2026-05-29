@@ -1,107 +1,61 @@
-import { useState, useEffect, useRef } from 'react'
-import { getApprovedUsers, updateUserProfile, getYearbookMessages, addYearbookMessage } from '../firebase/firestore'
-import { uploadProfilePic } from '../firebase/storage'
+import { useState, useEffect } from 'react'
 
 const majors = ['All Majors', 'CSE']
 
-export default function Yearbook({ user }) {
+const MOCK_STUDENTS = [
+  { uid: 's1', name: 'Aarav Sharma', branch: 'CSE', rollNo: 'CSE22001', profilePic: '' },
+  { uid: 's2', name: 'Priya Patel', branch: 'CSE', rollNo: 'CSE22002', profilePic: '' },
+  { uid: 's3', name: 'Rahul Kumar', branch: 'All Majors', rollNo: 'ME22010', profilePic: '' },
+  { uid: 's4', name: 'Sneha Gupta', branch: 'CSE', rollNo: 'CSE22015', profilePic: '' },
+  { uid: 's5', name: 'Karan Singh', branch: 'All Majors', rollNo: 'EE22045', profilePic: '' },
+  { uid: 's6', name: 'Ananya Reddy', branch: 'CSE', rollNo: 'CSE22089', profilePic: '' },
+]
+
+const MOCK_MESSAGES = {
+  's1': [
+    { id: 'm1', text: 'Bro, I will miss your code debugging sessions!', authorName: 'Rahul', createdAt: new Date('2026-05-10T10:00:00Z') },
+    { id: 'm2', text: 'All the best for your job!', authorName: 'Priya', createdAt: new Date('2026-05-12T14:30:00Z') },
+  ],
+  's2': [
+    { id: 'm3', text: 'Thanks for all the assignment help!', authorName: 'Karan', createdAt: new Date('2026-05-11T09:15:00Z') },
+  ]
+}
+
+export default function Yearbook() {
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('All Majors')
   const [selectedStudent, setSelectedStudent] = useState(null)
-  const [message, setMessage] = useState('')
   const [visibleCount, setVisibleCount] = useState(8)
   const [students, setStudents] = useState([])
   const [loading, setLoading] = useState(true)
   const [studentMessages, setStudentMessages] = useState([])
   const [messagesLoading, setMessagesLoading] = useState(false)
-  const [sendingMsg, setSendingMsg] = useState(false)
-  const [uploadingPic, setUploadingPic] = useState(false)
-  const fileInputRef = useRef(null)
 
-  // Fetch approved students from Firestore
+  // Fetch approved students (mocked)
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchStudents = () => {
       setLoading(true)
-      try {
-        const approved = await getApprovedUsers()
-        setStudents(approved)
-      } catch (err) {
-        console.error('Error fetching students:', err)
-      } finally {
+      setTimeout(() => {
+        setStudents(MOCK_STUDENTS)
         setLoading(false)
-      }
+      }, 500)
     }
     fetchStudents()
   }, [])
 
-  // Fetch messages when a student is selected
+  // Fetch messages when a student is selected (mocked)
   useEffect(() => {
     if (!selectedStudent) return
-    const fetchMessages = async () => {
+    const fetchMessages = () => {
       setMessagesLoading(true)
-      try {
-        const msgs = await getYearbookMessages(selectedStudent.uid)
+      setTimeout(() => {
+        const msgs = MOCK_MESSAGES[selectedStudent.uid] || []
         setStudentMessages(msgs)
-      } catch (err) {
-        console.error('Error fetching messages:', err)
-        setStudentMessages([])
-      } finally {
         setMessagesLoading(false)
-      }
+      }, 300)
     }
     fetchMessages()
   }, [selectedStudent])
-
-  const handleSendMessage = async () => {
-    if (!message.trim() || !selectedStudent) return
-    setSendingMsg(true)
-    try {
-      await addYearbookMessage({
-        toUid: selectedStudent.uid,
-        text: message.trim(),
-        authorName: user ? user.name : 'Anonymous',
-        authorUid: user ? user.uid : 'anonymous',
-      })
-      // Refresh messages
-      const msgs = await getYearbookMessages(selectedStudent.uid)
-      setStudentMessages(msgs)
-      setMessage('')
-    } catch (err) {
-      alert('Error sending message: ' + err.message)
-    } finally {
-      setSendingMsg(false)
-    }
-  }
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
-    }
-  }
-
-  const handleProfilePicUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file || !user) return
-
-    setUploadingPic(true)
-    try {
-      const downloadURL = await uploadProfilePic(user.uid, file)
-      await updateUserProfile(user.uid, { profilePic: downloadURL })
-      // Update local students list
-      setStudents((prev) =>
-        prev.map((s) => (s.uid === user.uid ? { ...s, profilePic: downloadURL } : s))
-      )
-      // Update selected student if it's the current user
-      if (selectedStudent?.uid === user.uid) {
-        setSelectedStudent((prev) => ({ ...prev, profilePic: downloadURL }))
-      }
-    } catch (err) {
-      alert('Error uploading profile pic: ' + err.message)
-    } finally {
-      setUploadingPic(false)
-    }
-  }
 
   const getInitials = (name) => {
     if (!name) return '?'
@@ -116,9 +70,8 @@ export default function Yearbook({ user }) {
     return matchesSearch && matchesMajor
   })
 
-  const formatDate = (timestamp) => {
-    if (!timestamp) return ''
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
+  const formatDate = (date) => {
+    if (!date) return ''
     return date.toLocaleDateString()
   }
 
@@ -135,7 +88,7 @@ export default function Yearbook({ user }) {
           </h2>
           <p className="text-stone-400 text-sm sm:text-base md:text-lg max-w-xl mx-auto leading-relaxed">
             Faces that defined our journey. Moments that became memories.
-            Click a card to sign their yearbook.
+            Click a card to read their yearbook.
           </p>
         </div>
       </div>
@@ -219,12 +172,6 @@ export default function Yearbook({ user }) {
                         Open Yearbook
                       </span>
                     </div>
-                    {/* Profile pic update badge for own card */}
-                    {user && student.uid === user.uid && (
-                      <div className="absolute top-2 right-2 px-2 py-1 bg-gold-500/90 text-stone-900 text-[10px] font-bold rounded-sm uppercase tracking-wider">
-                        You
-                      </div>
-                    )}
                   </div>
                   <div className="p-4">
                     <h3
@@ -268,7 +215,6 @@ export default function Yearbook({ user }) {
         const currentIndex = filtered.indexOf(selectedStudent)
         const prevStudent = currentIndex > 0 ? filtered[currentIndex - 1] : null
         const nextStudent = currentIndex < filtered.length - 1 ? filtered[currentIndex + 1] : null
-        const isOwnCard = user && selectedStudent.uid === user.uid
 
         return (
           <div
@@ -316,24 +262,6 @@ export default function Yearbook({ user }) {
                     </span>
                   </div>
                 )}
-
-                {/* Upload profile pic button — only on own card */}
-                {isOwnCard && (
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploadingPic}
-                    className="absolute top-4 right-4 px-3 py-2 bg-black/70 backdrop-blur-sm text-stone-200 text-xs rounded-lg hover:bg-gold-500 hover:text-stone-900 transition-all cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
-                  >
-                    📷 {uploadingPic ? 'Uploading...' : 'Update Photo'}
-                  </button>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleProfilePicUpload}
-                  className="hidden"
-                />
 
                 {/* Name overlay */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
@@ -391,9 +319,6 @@ export default function Yearbook({ user }) {
                       <p className="text-stone-500 italic text-lg leading-relaxed" style={{ fontFamily: 'var(--font-handwriting)' }}>
                         No signatures yet.
                       </p>
-                      <p className="text-stone-600 italic text-base mt-1" style={{ fontFamily: 'var(--font-handwriting)' }}>
-                        Be the first to leave a memory.
-                      </p>
                     </div>
                   ) : (
                     studentMessages.map((msg) => (
@@ -411,30 +336,6 @@ export default function Yearbook({ user }) {
                       </div>
                     ))
                   )}
-                </div>
-
-                {/* Message input */}
-                <div className="p-4 sm:p-5 border-t border-stone-800">
-                  <div className="relative">
-                    <textarea
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Write a farewell message..."
-                      className="w-full px-4 py-3 pr-12 bg-stone-900 border border-stone-800 rounded-lg text-stone-100 placeholder-stone-600 focus:outline-none focus:border-gold-500 transition-colors resize-none"
-                      rows={2}
-                      style={{ fontFamily: 'var(--font-handwriting)', fontSize: '1.05rem' }}
-                    />
-                    <button
-                      onClick={handleSendMessage}
-                      disabled={sendingMsg}
-                      className="absolute bottom-3 right-3 w-8 h-8 flex items-center justify-center text-gold-500 hover:text-gold-400 transition-colors cursor-pointer disabled:opacity-50"
-                    >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-                      </svg>
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
