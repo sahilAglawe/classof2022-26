@@ -16,7 +16,6 @@ function App() {
   const [showSignIn, setShowSignIn] = useState(false)
   const [showHero, setShowHero] = useState(true)
   const [user, setUser] = useState(null)
-  const [authLoading, setAuthLoading] = useState(true)
   const [showMyContent, setShowMyContent] = useState(false)
   const [myContentTab, setMyContentTab] = useState('media')
 
@@ -27,7 +26,6 @@ function App() {
       } else {
         setUser(null)
       }
-      setAuthLoading(false)
     })
     return () => unsubscribe()
   }, [])

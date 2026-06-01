@@ -33,6 +33,7 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
   useEffect(() => {
     if (!user) return
     fetchMyMedia()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
   // Fetch user's yearbook messages when tab switches
@@ -40,6 +41,7 @@ export default function MyContentPanel({ user, onClose, defaultTab = 'media' }) 
     if (activeTab === 'yearbook' && user && myMessages.length === 0 && messagesLoading) {
       fetchMyMessages()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, user])
 
   const fetchMyMedia = async () => {

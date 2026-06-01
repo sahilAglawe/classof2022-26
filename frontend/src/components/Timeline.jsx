@@ -48,7 +48,7 @@ const timelineData = [
   },
 ]
 
-function TimelineNode({ item, index }) {
+function TimelineNode({ item }) {
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
 
