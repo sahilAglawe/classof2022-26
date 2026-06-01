@@ -15,7 +15,7 @@ const timelineData = [
     title: 'Finding Our Feet',
     description:
       'The library became our second home. We stressed over midterms, but those class bunks in between made everything feel lighter.',
-    image: '/images/library-study.png',
+    image: '/images/library-study.jpg',
     caption: 'Library all-nighter... again 📚',
     side: 'right',
   },
@@ -24,7 +24,7 @@ const timelineData = [
     title: 'We Became the Seniors',
     description:
       "It was the beginning when we first stepped into the department building. We made endless memories there, and before we knew it, it became our second home. From lost juniors to confident seniors, we grew with every moment. And now, those memories are something we’ll carry forever.",
-    image: '/images/freshers-night.png',
+    image: '/images/freshers-night.jpg',
     caption: "From juniors to seniors ✨",
     side: 'left',
   },
@@ -33,7 +33,7 @@ const timelineData = [
     title: 'A Goodbye Worth Remembering',
     description:
       'We weren’t just saying goodbye to our college — we were saying goodbye to a part of ourselves. A chapter ends, but the memories stay forever.',
-    image: '/images/farewell.png',
+    image: '/images/farewell.jpg',
     caption: 'The farewell that hit different 💐',
     side: 'right',
   },
@@ -42,7 +42,7 @@ const timelineData = [
     title: 'Graduation',
     description:
       'Four years felt like four minutes. We walked in as strangers and walked out as family. This chapter ends, but the story? It\'s just getting started.',
-    image: '/images/graduation.png',
+    image: '/images/class-of-26.jpg',
     caption: "We made it. Class of '26 🎓",
     side: 'center',
   },
