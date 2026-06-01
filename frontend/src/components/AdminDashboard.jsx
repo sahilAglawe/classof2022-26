@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getAllUsers, approveUser, rejectUser } from '../firebase/firestore'
+import { getAllUsers, approveUser, rejectUser, deleteUser } from '../firebase/firestore'
 import { sendDecisionEmail } from '../firebase/email'
 
 export default function AdminDashboard({ user, onBack }) {
@@ -7,6 +7,7 @@ export default function AdminDashboard({ user, onBack }) {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('pending')
   const [actionLoading, setActionLoading] = useState(null)
+  const [deleteConfirmUser, setDeleteConfirmUser] = useState(null)
 
   const fetchUsers = async () => {
     setLoading(true)
@@ -71,6 +72,19 @@ export default function AdminDashboard({ user, onBack }) {
       alert('Error rejecting user: ' + err.message)
     } finally {
       setActionLoading(null)
+    }
+  }
+
+  const handleDelete = async (uid) => {
+    setActionLoading(uid)
+    try {
+      await deleteUser(uid)
+      setUsers((prev) => prev.filter((u) => u.uid !== uid))
+    } catch (err) {
+      alert('Error deleting user: ' + err.message)
+    } finally {
+      setActionLoading(null)
+      setDeleteConfirmUser(null)
     }
   }
 
@@ -171,19 +185,17 @@ export default function AdminDashboard({ user, onBack }) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer flex items-center gap-2 ${
-                  activeTab === tab.id
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer flex items-center gap-2 ${activeTab === tab.id
                     ? 'bg-stone-800 text-stone-100'
                     : 'text-stone-500 hover:text-stone-300 hover:bg-stone-900'
-                }`}
+                  }`}
               >
                 {tab.label}
                 <span
-                  className={`text-xs px-1.5 py-0.5 rounded-full ${
-                    activeTab === tab.id
+                  className={`text-xs px-1.5 py-0.5 rounded-full ${activeTab === tab.id
                       ? `bg-${tab.color}-500/20 text-${tab.color}-400`
                       : 'bg-stone-800 text-stone-500'
-                  }`}
+                    }`}
                 >
                   {tab.count}
                 </span>
@@ -239,13 +251,12 @@ export default function AdminDashboard({ user, onBack }) {
                           </span>
                         )}
                         <span
-                          className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                            u.status === 'pending'
+                          className={`text-[10px] px-1.5 py-0.5 rounded-full ${u.status === 'pending'
                               ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/30'
                               : u.status === 'approved'
-                              ? 'bg-green-500/10 text-green-400 border border-green-500/30'
-                              : 'bg-red-500/10 text-red-400 border border-red-500/30'
-                          }`}
+                                ? 'bg-green-500/10 text-green-400 border border-green-500/30'
+                                : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                            }`}
                         >
                           {u.status}
                         </span>
@@ -304,6 +315,15 @@ export default function AdminDashboard({ user, onBack }) {
                         Re-approve
                       </button>
                     )}
+                    {u.uid !== user?.uid && (
+                      <button
+                        onClick={() => setDeleteConfirmUser(u)}
+                        disabled={actionLoading === u.uid}
+                        className="px-4 py-2 rounded-lg text-xs font-semibold tracking-wide bg-red-600/10 text-red-500 border border-red-600/30 hover:bg-red-600/20 transition-all cursor-pointer disabled:opacity-50"
+                      >
+                        🗑️ Delete
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -322,6 +342,59 @@ export default function AdminDashboard({ user, onBack }) {
           </div>
         </div>
       </div>
+
+      {/* Custom Premium Delete Confirmation Modal */}
+      {deleteConfirmUser && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in"
+          onClick={() => setDeleteConfirmUser(null)}
+        >
+          <div 
+            className="w-full max-w-md mx-4 p-8 relative rounded-2xl border transition-all"
+            style={{
+              background: 'linear-gradient(145deg, #1c1313, #150f0f)',
+              borderColor: 'rgba(239, 68, 68, 0.3)',
+              boxShadow: '0 25px 60px rgba(0,0,0,0.6), 0 0 50px rgba(239, 68, 68, 0.05)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Warning Icon Banner */}
+            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-red-500/10 text-red-500 border border-red-500/20 mx-auto mb-6">
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+
+            {/* Modal Text */}
+            <h3 className="text-2xl font-semibold text-stone-100 text-center mb-3">
+              Delete User Account?
+            </h3>
+            <p className="text-stone-400 text-sm leading-relaxed text-center mb-8">
+              Are you sure you want to permanently delete <strong className="text-red-400 font-semibold">{deleteConfirmUser.name}</strong>? This action is irreversible and will erase all their profile data and records.
+            </p>
+
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => setDeleteConfirmUser(null)}
+                className="flex-1 py-3 px-4 rounded-xl border border-stone-700 text-stone-300 text-sm font-semibold tracking-wide hover:bg-stone-900 transition-all duration-300 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirmUser.uid)}
+                disabled={actionLoading === deleteConfirmUser.uid}
+                className="flex-1 py-3 px-4 rounded-xl text-sm font-semibold tracking-wide text-white transition-all duration-300 cursor-pointer hover:brightness-115 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  background: 'linear-gradient(135deg, #dc2626, #b91c1c)'
+                }}
+              >
+                {actionLoading === deleteConfirmUser.uid ? 'Deleting...' : '🗑️ Delete User'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

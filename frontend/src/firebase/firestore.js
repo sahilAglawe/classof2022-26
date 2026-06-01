@@ -46,6 +46,11 @@ export async function rejectUser(uid) {
   await updateDoc(doc(db, 'users', uid), { status: 'rejected' })
 }
 
+// Delete a user
+export async function deleteUser(uid) {
+  await deleteDoc(doc(db, 'users', uid))
+}
+
 // Update user profile (profile pic, etc.)
 export async function updateUserProfile(uid, data) {
   await updateDoc(doc(db, 'users', uid), data)

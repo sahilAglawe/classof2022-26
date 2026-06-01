@@ -8,7 +8,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 const TEMPLATE_PENDING = import.meta.env.VITE_EMAILJS_TEMPLATE_PENDING
 const TEMPLATE_DECISION = import.meta.env.VITE_EMAILJS_TEMPLATE_DECISION
 
-// Initialize EmailJS
+// Initialize EmailJS with Public Key
 emailjs.init(PUBLIC_KEY)
 
 // ==========================================
@@ -16,9 +16,15 @@ emailjs.init(PUBLIC_KEY)
 // ==========================================
 export async function sendRegistrationPendingEmail({ name, email }) {
   try {
+    console.log('[EmailJS Debug] Preparing to send pending email...')
+    console.log('[EmailJS Debug] Service ID:', SERVICE_ID)
+    console.log('[EmailJS Debug] Template ID:', TEMPLATE_PENDING)
+    
     const templateParams = {
       to_name: name,
+      name: name, // support custom template variable {{name}}
       to_email: email,
+      email: email, // support custom template variable {{email}}
       subject: '🎓 Registration Received — Class of 2022-26',
       message_html: buildPendingEmailHTML(name),
     }
@@ -36,10 +42,17 @@ export async function sendRegistrationPendingEmail({ name, email }) {
 // ==========================================
 export async function sendDecisionEmail({ name, email, status }) {
   try {
+    console.log(`[EmailJS Debug] Preparing to send ${status} email...`)
+    console.log('[EmailJS Debug] Service ID:', SERVICE_ID)
+    console.log('[EmailJS Debug] Template ID:', TEMPLATE_DECISION)
+    
     const isApproved = status === 'approved'
+    
     const templateParams = {
       to_name: name,
+      name: name, // support custom template variable {{name}}
       to_email: email,
+      email: email, // support custom template variable {{email}}
       subject: isApproved
         ? '✅ Access Approved — Welcome to Class of 2022-26!'
         : '❌ Access Request Update — Class of 2022-26',
