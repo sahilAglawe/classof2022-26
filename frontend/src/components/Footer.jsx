@@ -24,10 +24,12 @@ export default function Footer({ onNavClick, currentPage }) {
 
         {/* Copyright */}
         <p
-          className="text-stone-500 text-sm"
+          className="text-stone-500 text-sm leading-relaxed"
           style={{ fontFamily: 'var(--font-handwriting)', fontSize: '1rem' }}
         >
-          © 2026 Batch . All memories preserved forever.
+          © 2026 Sahil Aglawe. All rights reserved.
+          <br />
+          Made with ❤ by Sahil and Shrikant
         </p>
       </div>
     </footer>
