@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "build": "npm --prefix frontend run build",
+    "deploy": "firebase deploy"
+  },
   "dependencies": {
     "@google-cloud/storage": "^7.19.0"
   }
