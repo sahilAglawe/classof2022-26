@@ -53,7 +53,7 @@ export default function MediaVault({ user }) {
   const [activeFilter, setActiveFilter] = useState('All Memories')
   const [lightbox, setLightbox] = useState(null)
   const [lightboxIndex, setLightboxIndex] = useState(-1)
-  const [newestFirst, setNewestFirst] = useState(true)
+  const [newestFirst, setNewestFirst] = useState(false)
   const [visibleCount, setVisibleCount] = useState(6)
   const [photos, setPhotos] = useState([])
   const [loading, setLoading] = useState(true)
@@ -165,8 +165,8 @@ export default function MediaVault({ user }) {
       : photos.filter((p) => p.tag === activeFilter)
 
   const sortedPhotos = [...filtered].sort((a, b) => {
-    const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0)
-    const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0)
+    const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || Date.now())
+    const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || Date.now())
     return newestFirst ? dateB - dateA : dateA - dateB
   })
 
