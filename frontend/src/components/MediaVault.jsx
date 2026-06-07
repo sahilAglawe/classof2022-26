@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { getMediaItems, addMediaItem } from '../firebase/firestore'
 import { uploadMediaImage } from '../firebase/storage'
+import { sendMediaUploadedNotifications } from '../firebase/email'
 
 const filterOptions = [
   'All Memories',
@@ -145,6 +146,15 @@ export default function MediaVault({ user }) {
         uploadedBy: user.name,
         uploadedByUid: user.uid,
       })
+      
+      // Trigger email notifications to other users in the background
+      sendMediaUploadedNotifications({
+        uploaderName: user.name,
+        caption: uploadCaption.trim(),
+        imageUrl,
+        uploaderUid: user.uid,
+      })
+
       await fetchPhotos()
       resetUploadForm()
     } catch (err) {

@@ -1,4 +1,5 @@
 import emailjs from '@emailjs/browser'
+import { getApprovedUsers } from './firestore'
 
 // ==========================================
 // EmailJS Configuration
@@ -224,6 +225,112 @@ function buildRejectedEmailHTML(name) {
 
         <p style="color: #78716c; font-size: 13px; line-height: 1.6; margin: 0;">
           If you have questions or need help, please reach out to the admin team directly.
+        </p>
+      </div>
+
+      </div>
+    </div>
+  `
+}
+
+// ==========================================
+// MAIL 3: Media Uploaded Notification — sent on upload
+// ==========================================
+export async function sendMediaUploadedNotifications({ uploaderName, caption, imageUrl, uploaderUid }) {
+  try {
+    console.log('[EmailJS Debug] Preparing to send media upload notifications...')
+    
+    // 1. Get all approved users
+    const users = await getApprovedUsers()
+    
+    // 2. Filter out the uploader so they don't get a notification for their own upload
+    const recipients = users.filter((user) => user.uid !== uploaderUid && user.email)
+    
+    if (recipients.length === 0) {
+      console.log('[EmailJS Debug] No other approved users to notify.')
+      return
+    }
+
+    console.log(`[EmailJS Debug] Sending notifications to ${recipients.length} user(s)...`)
+
+    // 3. Send emails in the background (using Promise.allSettled to track status)
+    const emailPromises = recipients.map(async (recipient) => {
+      try {
+        const templateParams = {
+          to_name: recipient.name,
+          name: recipient.name,
+          to_email: recipient.email,
+          email: recipient.email,
+          subject: `📸 New Media Uploaded by ${uploaderName} — Class of 2022-26`,
+          message_html: buildMediaUploadedEmailHTML(uploaderName, caption, imageUrl),
+        }
+        await emailjs.send(SERVICE_ID, TEMPLATE_DECISION, templateParams)
+        console.log(`✅ Media upload notification sent to: ${recipient.email}`)
+      } catch (err) {
+        console.error(`❌ Failed to send media upload notification to ${recipient.email}:`, err)
+      }
+    })
+
+    // Run all email requests concurrently in the background
+    Promise.allSettled(emailPromises).then((results) => {
+      const successes = results.filter((r) => r.status === 'fulfilled').length
+      console.log(`[EmailJS Debug] Finished sending notifications: ${successes}/${recipients.length} succeeded.`)
+    })
+
+  } catch (error) {
+    console.error('❌ Failed to send media upload notifications:', error)
+  }
+}
+
+function buildMediaUploadedEmailHTML(uploaderName, caption, imageUrl) {
+  const siteUrl = window.location.origin
+  return `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background: #0f0e0b; border-radius: 16px; overflow: hidden; border: 1px solid #2d2a24;">
+      <!-- Header Banner -->
+      <div style="background: linear-gradient(135deg, #1c1a17 0%, #2d2a24 100%); padding: 40px 30px; text-align: center;">
+        <h1 style="color: #c4a44b; font-size: 28px; margin: 0 0 8px 0; font-weight: 400; font-style: italic;">
+          Class of 2022-26
+        </h1>
+        <p style="color: #a8a29e; font-size: 13px; margin: 0; letter-spacing: 2px; text-transform: uppercase;">
+          Digital Yearbook &amp; Archive
+        </p>
+      </div>
+
+      <!-- Content -->
+      <div style="padding: 35px 30px;">
+        <h2 style="color: #e7e5e4; font-size: 22px; margin: 0 0 20px 0; font-weight: 500;">
+          New Memory Uploaded! 📸
+        </h2>
+        <p style="color: #a8a29e; font-size: 15px; line-height: 1.7; margin: 0 0 20px 0;">
+          <strong style="color: #facc15;">${uploaderName}</strong> has just uploaded a new memory to the Media Vault. Check it out to relive the moment!
+        </p>
+
+        <!-- Media Card -->
+        <div style="background: #161412; border: 1px solid #2d2a24; border-radius: 12px; overflow: hidden; margin-bottom: 25px;">
+          ${imageUrl ? `
+            <div style="width: 100%; text-align: center; background: #000; padding: 15px 0;">
+              <img src="${imageUrl}" alt="Uploaded Memory" style="max-width: 100%; max-height: 300px; object-fit: contain; display: block; margin: 0 auto; border-radius: 6px;" />
+            </div>
+          ` : ''}
+          <div style="padding: 20px; border-top: 1px solid #2d2a24;">
+            <p style="color: #e7e5e4; font-size: 16px; font-style: italic; margin: 0 0 8px 0; font-family: 'Georgia', serif; line-height: 1.5;">
+              "${caption}"
+            </p>
+            <p style="color: #78716c; font-size: 12px; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
+              Uploaded by ${uploaderName}
+            </p>
+          </div>
+        </div>
+
+        <!-- Button -->
+        <div style="text-align: center; margin: 30px 0 20px 0;">
+          <a href="${siteUrl}" target="_blank" style="background: #c4a44b; color: #0f0e0b; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; display: inline-block; box-shadow: 0 4px 12px rgba(196,164,75,0.2);">
+            Open Media Vault
+          </a>
+        </div>
+
+        <p style="color: #78716c; font-size: 13px; line-height: 1.6; margin: 0; text-align: center;">
+          You are receiving this because you are a verified member of the Class of 2022-26.
         </p>
       </div>
 
